@@ -1,0 +1,11 @@
+[theme]
+# primaryColor = "black"
+# backgroundColor = "#BF5223"
+
+# #BF5223
+# #7D0911
+# #5A1F05
+
+[client]
+showErrorDetails = "none"
+toolbarMode = "minimal"
