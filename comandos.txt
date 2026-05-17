@@ -5,3 +5,7 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/nilberto07/Relatorio.IBF.git
 git push -u origin main
+
+# DevContainer
+## Para rodar e a configuração do spreadsheet precisa do devcontainer.json
+### Nao entendi bem, mas quando abro o dev do github online ele instala sozinho e funciona, estudar sobre docker
