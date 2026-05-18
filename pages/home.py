@@ -69,30 +69,47 @@ column_configuration = {
 
 
 # Para Filtro: lista de opções ordenadas e sem valores nulos
-opcoes_igrejas = sorted(df["Igrejas"].dropna().unique())
+igrejas_disp = sorted(df["Igrejas"].dropna().unique()) if "Igrejas" in df.columns else []
+anos_disp = sorted(df["Ano"].dropna().unique().astype(int)) if "Ano" in df.columns else []
+meses_disp = sorted(df["Mês"].dropna().unique().astype(int)) if "Mês" in df.columns else []
 
 # Sidebar
 with st.sidebar:
     st.header("🔎 Filtros")
 
-    filtro_igrejas = st.multiselect(
-        label="Igrejas:",
-        options=opcoes_igrejas,
-        placeholder="Selecione uma ou mais igrejas"
-    )
+    filtro_igrejas = st.multiselect(label="Igrejas:", options=igrejas_disp, placeholder="Selecione uma ou mais igrejas")
+    filtro_ano = st.multiselect("Ano:", options=anos_disp, placeholder="Todos os anos")
+    filtro_mes = st.multiselect("Mês:", options=meses_disp, placeholder="Todos os meses")
 
     if filtro_igrejas:
-        df = df[
+        df_exibicao, df = df_exibicao[
+            df_exibicao["Igrejas"].isin(filtro_igrejas)
+        ], df[
             df["Igrejas"].isin(filtro_igrejas)
+        ]
+    if filtro_ano:
+        df_exibicao, df = df_exibicao[
+            df_exibicao["Ano"].isin(filtro_ano)
+        ], df[
+            df["Ano"].isin(filtro_ano)
+        ]
+    if filtro_mes:
+        df_exibicao, df = df_exibicao[
+            df_exibicao["Mês"].isin(filtro_mes)
+        ], df[
+            df["Mês"].isin(filtro_mes)
         ]
 
 
-st.header("📊 Relatório Assembleia Geral")
+st.markdown("#### Relatório Assembleia Geral", text_alignment="center")
+
 # ── Cards de Totais ──────────────────────────────────────────
-st.subheader("💰 Totais")
+st.space(size="small")
+st.subheader("📊 Resumo Financeiro", divider="blue")
 
 total_receitas      = df["Receitas"].sum()
 total_despesas      = df["Despesas"].sum()
+total_liquido       = df["Receitas"].sum() - df["Despesas"].sum()
 total_saldo_inicial = df["Saldo Inicial"].sum()
 total_caixa         = df["Caixa(Templo)"].sum()
 
@@ -101,7 +118,9 @@ with col1:
     st.metric(label="📈 Receitas", value=formatar_brl(total_receitas))
 
 with col2:
-    st.metric(label="📉 Despesas", value=formatar_brl(total_despesas))
+    st.metric(label="📉 Despesas", value=formatar_brl(total_despesas), 
+              delta="Liquido: " + formatar_brl(total_liquido), delta_arrow="off", delta_color="blue"
+            )
 
 with col3:
     st.metric(label="🏦 Saldo Inicial", value=formatar_brl(total_saldo_inicial))
@@ -109,7 +128,9 @@ with col3:
 with col4:
     st.metric(label="🏛️ Caixa(Templo)", value=formatar_brl(total_caixa))
 
+st.space(size="medium")
 # ── Tabela ───────────────────────────────────────────────────
+st.subheader("➡️ Tabela Detalhada", divider="blue")
 st.dataframe(
     df_exibicao,
     width="stretch",
