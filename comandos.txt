@@ -6,6 +6,10 @@ git branch -M main
 git remote add origin https://github.com/nilberto07/Relatorio.IBF.git
 git push -u origin main
 
-# DevContainer
-## Para rodar e a configuração do spreadsheet precisa do devcontainer.json
-### Nao entendi bem, mas quando abro o dev do github online ele instala sozinho e funciona, estudar sobre docker
+# .streamlit
+1. Acesse: https://share.streamlit.io
+2. Clique no seu app → "Settings"
+3. Clique em "Secrets"
+4. Cole o conteúdo do seu secrets.toml
+5. Clique em "Save"
+6. Reinicie o app
