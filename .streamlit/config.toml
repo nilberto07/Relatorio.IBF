@@ -1,0 +1,18 @@
+[client]
+showErrorDetails = "none"
+toolbarMode = "minimal"
+
+[theme]
+primaryColor = "#1105bd"
+backgroundColor = "#4d1903"
+textColor = "#FFFFFF"
+
+# #BF5223
+# #7D0911
+# #5A1F05
+
+[theme.sidebar]
+primaryColor = "#5A1F05"
+backgroundColor = "#f1f1f1"
+secondaryBackgroundColor = "#b9b9b9"
+textColor = "#000000"

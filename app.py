@@ -5,12 +5,17 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 
 st.set_page_config(
     page_title="Financeiro das Igrejas - IBF",
-    page_icon="⛪",
+    page_icon="styles/logo.png",
     layout="wide", #Tela cheia
     #initial_sidebar_state="expanded" #Sidebar expandida por padrão
 )
 
-st.markdown("# ⛪ Dashboard Financeiro", text_alignment="center")
+st.logo(
+    "styles/logo.png",
+    size="large",
+    )
+
+st.markdown("# Dashboard Financeiro", text_alignment="center")
 
 home   = st.Page("pages/home.py",   title="Página Principal",         icon="🏷️", default=True)
 export = st.Page("pages/export.py", title="Relatório Assembleia Geral", icon="📊")
