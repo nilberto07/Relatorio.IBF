@@ -1,18 +1,23 @@
 [client]
-showErrorDetails = "none"
-toolbarMode = "minimal"
+# showErrorDetails = "none"
+# toolbarMode = "minimal"
 
 [theme]
-primaryColor = "#1105bd"
-backgroundColor = "#4d1903"
-textColor = "#FFFFFF"
+# primaryColor = "#1105bd"
+backgroundColor = "#ffffff"
+textColor = "#000000"
 
 # #BF5223
 # #7D0911
 # #5A1F05
 
 [theme.sidebar]
-primaryColor = "#5A1F05"
-backgroundColor = "#f1f1f1"
-secondaryBackgroundColor = "#b9b9b9"
-textColor = "#000000"
+primaryColor = "#7D0911"
+# backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#963005"
+textColor = "#ffffff"
+
+            #FFFFFF 0%,
+            #F5E6E0 35%,
+            #C27B5B 70%,
+            #5A1F05 100%
