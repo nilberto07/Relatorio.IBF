@@ -2,6 +2,9 @@ import pandas as pd
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import ssl
+from utils.theme import load_css
+
+load_css()
 
 ssl._create_default_https_context = ssl._create_stdlib_context
 
@@ -75,7 +78,18 @@ meses_disp = sorted(df["Mês"].dropna().unique().astype(int)) if "Mês" in df.co
 
 # Sidebar
 with st.sidebar:
-    st.header("🔎 Filtros")
+    st.markdown("""
+    <div style='
+                font-size:0.68rem; 
+                text-transform:uppercase; 
+                letter-spacing:0.12em; 
+                margin-bottom:1rem; 
+                padding-top:3rem;
+                font-weight:700;
+                border-bottom: 1px solid rgba(255,255,255,255);
+                '>Filtros
+                </div>
+    """, unsafe_allow_html=True)
 
     filtro_igrejas = st.multiselect(label="Igrejas:", options=igrejas_disp, placeholder="Selecione uma ou mais igrejas")
     filtro_ano = st.multiselect("Ano:", options=anos_disp, placeholder="Todos os anos")
@@ -99,34 +113,93 @@ with st.sidebar:
         ], df[
             df["Mês"].isin(filtro_mes)
         ]
-
-
-st.markdown("#### Relatório Assembleia Geral", text_alignment="center")
+    st.space(size="medium")
+    st.markdown("""
+    <hr style='border-color:rgba(255,255,255,255); margin-bottom:1.5rem;'>
+    <div style='text-align:center; padding: 2rem 0 1.5rem;'>
+        <div style='margin-bottom:0.5rem; display:flex; justify-content:center;'>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.95">
+                <path d="M12 2L12 5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M10.5 4H13.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M5 10L12 5L19 10V21H5V10Z" stroke="white" stroke-width="1.7" stroke-linejoin="round" fill="rgba(255,255,255,0.1)"/>
+                <path d="M9 21V15C9 13.3431 10.3431 12 12 12C13.6569 12 15 13.3431 15 15V21" stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
+                <rect x="10.5" y="8" width="3" height="3" rx="0.5" stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
+            </svg>
+        </div>
+        <div style='font-family:"Playfair Display",serif; font-size:1.1rem; font-weight:700; letter-spacing:0.04em;'>IBF</div>
+        <div style='font-size:0.7rem; opacity:0.6; text-transform:uppercase; letter-spacing:0.1em; margin-top:2px;'>Sistema Financeiro</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ── Cards de Totais ──────────────────────────────────────────
-st.space(size="small")
-st.subheader("📊 Resumo Financeiro", divider="blue")
+total_rec  = df["Receitas"].sum()
+total_desp = df["Despesas"].sum()
+saldo_ini  = df["Saldo Inicial"].sum()
+caixa_tmp  = df["Caixa(Templo)"].sum()
+liquido    = total_rec - total_desp
+badge_class = "badge-pos" if liquido >= 0 else "badge-neg"
+badge_sign  = "▲" if liquido >= 0 else "▼"
 
-total_receitas      = df["Receitas"].sum()
-total_despesas      = df["Despesas"].sum()
-total_liquido       = df["Receitas"].sum() - df["Despesas"].sum()
-total_saldo_inicial = df["Saldo Inicial"].sum()
-total_caixa         = df["Caixa(Templo)"].sum()
+# EXPLICAÇÃO DO svg ESTA NO ARQUIVO NOTAS.TXT
+SVG_RECEITAS = '''
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path
+            d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+            stroke="#BF5223"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+    </svg>'''
+SVG_DESPESAS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#7D0911" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 8 12 3 7 8" stroke="#7D0911" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="3" x2="12" y2="15" stroke="#7D0911" stroke-width="1.8" stroke-linecap="round"/></svg>'
+SVG_SALDO    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#5A1F05" stroke-width="1.8"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2Z" stroke="#5A1F05" stroke-width="1.8"/><circle cx="12" cy="14" r="2" stroke="#5A1F05" stroke-width="1.8"/></svg>'
+SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
 
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric(label="📈 Receitas", value=formatar_brl(total_receitas))
-
-with col2:
-    st.metric(label="📉 Despesas", value=formatar_brl(total_despesas), 
-              delta="Liquido: " + formatar_brl(total_liquido), delta_arrow="off", delta_color="blue"
-            )
-
-with col3:
-    st.metric(label="🏦 Saldo Inicial", value=formatar_brl(total_saldo_inicial))
-
-with col4:
-    st.metric(label="🏛️ Caixa(Templo)", value=formatar_brl(total_caixa))
+st.markdown(f"""
+<div class="section-title">Resumo Financeiro</div>
+<div class="kpi-grid">
+    <div class="kpi-card receitas">
+        <div class="kpi-inner">
+            <div class="kpi-icon receitas">{SVG_RECEITAS}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Receitas</div>
+                <div class="kpi-value">{formatar_brl(total_rec)}</div>
+                <div class="kpi-sub">Entradas no período</div>
+            </div>
+        </div>
+    </div>
+    <div class="kpi-card despesas">
+        <div class="kpi-inner">
+            <div class="kpi-icon despesas">{SVG_DESPESAS}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Despesas</div>
+                <div class="kpi-value">{formatar_brl(total_desp)}</div>
+                <span class="kpi-badge {badge_class}">{badge_sign} Líquido: {formatar_brl(liquido)}</span>
+            </div>
+        </div>
+    </div>
+    <div class="kpi-card saldo">
+        <div class="kpi-inner">
+            <div class="kpi-icon saldo">{SVG_SALDO}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Saldo Inicial</div>
+                <div class="kpi-value">{formatar_brl(saldo_ini)}</div>
+                <div class="kpi-sub">Patrimônio acumulado</div>
+            </div>
+        </div>
+    </div>
+    <div class="kpi-card caixa">
+        <div class="kpi-inner">
+            <div class="kpi-icon caixa">{SVG_CAIXA}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Caixa (Templo)</div>
+                <div class="kpi-value">{formatar_brl(caixa_tmp)}</div>
+                <div class="kpi-sub">Reserva para obras</div>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.space(size="medium")
 # ── Tabela ───────────────────────────────────────────────────

@@ -1,0 +1,30 @@
+# EXPLICAÇÃO DESSE TRECHO 
+## Esse trecho é um SVG (Scalable Vector Graphics), ou seja, um desenho vetorial definido por código XML
+SVG_RECEITAS = '''
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path
+            d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+            stroke="#BF5223"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+    </svg>'''
+
+# width="18" height="18"
+## Define o tamanho que será exibido na tela: 18px × 18px
+
+# viewBox="0 0 24 24"
+## Define o sistema de coordenadas interno do desenho:
+x inicial = 0
+y inicial = 0
+largura = 24
+altura = 24
+
+# fill="none"
+## Significa: Sem preenchimento.
+
+# Tag <path>: É a parte que realmente desenha o ícone. Nesse caso o $
+## <path d="..." /> 
+O atributo d significa: drawing commands
+(comandos de desenho)

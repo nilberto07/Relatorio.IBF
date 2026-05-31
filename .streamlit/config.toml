@@ -5,17 +5,18 @@
 [theme]
 # primaryColor = "#1105bd"
 backgroundColor = "#ffffff"
-textColor = "#000000"
+# textColor = "#000000"
 
 # #BF5223
 # #7D0911
 # #5A1F05
+#ffffff
 
 [theme.sidebar]
-primaryColor = "#7D0911"
+# primaryColor = "#7D0911"
 # backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#963005"
-textColor = "#ffffff"
+# secondaryBackgroundColor = "#963005"
+# textColor = "#ffffff"
 
             #FFFFFF 0%,
             #F5E6E0 35%,
