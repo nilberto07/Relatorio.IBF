@@ -26,15 +26,17 @@ df = conn.read(
 # Função para formatar valores monetários em BRL
 def formatar_brl(valor: float) -> str:
     valor_reais = valor / 100
-    return f"R$ {valor_reais:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"R$ {valor_reais:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") #if valor_reais > 0 else "—"
 
 
 df_exibicao = df.copy()
 # Aplica a formatação BR nas colunas de valores
 for col in ["Receitas", "Despesas", "Saldo Inicial", "Caixa(Templo)"]:
     df_exibicao[col] = df_exibicao[col].apply(
-        lambda v: formatar_brl(v) if pd.notna(v) else ""
+        lambda v: formatar_brl(v) if pd.notna(v) else "—"
     )
+
+df_exibicao["Observações"] = df_exibicao["Observações"] if df_exibicao["Observações"].notnull().any() else "—"
 
 # Converte para numérico (erros viram NaN, que o sum() ignora)
 df["Receitas"]      = pd.to_numeric(df["Receitas"],      errors="coerce")
@@ -135,10 +137,14 @@ with st.sidebar:
 total_rec  = df["Receitas"].sum()
 total_desp = df["Despesas"].sum()
 saldo_ini  = df["Saldo Inicial"].sum()
-caixa_tmp  = df["Caixa(Templo)"].sum()
+#caixa_tmp  = df["Caixa(Templo)"].sum()
 liquido    = total_rec - total_desp
 badge_class = "badge-pos" if liquido >= 0 else "badge-neg"
 badge_sign  = "▲" if liquido >= 0 else "▼"
+saldo_fim   = saldo_ini + liquido
+
+df_caixa  = df[df["Caixa(Templo)"] > 0].sort_values(["Ano","Mês"], ascending=False)
+caixa_tmp = df_caixa["Caixa(Templo)"].iloc[0] if not df_caixa.empty else 0.0
 
 # EXPLICAÇÃO DO svg ESTA NO ARQUIVO NOTAS.TXT
 SVG_RECEITAS = '''
@@ -182,12 +188,22 @@ st.markdown(f"""
         <div class="kpi-inner">
             <div class="kpi-icon saldo">{SVG_SALDO}</div>
             <div class="kpi-body">
+                <div class="kpi-label">Saldo Líquido</div>
+                <div class="kpi-value">{badge_sign} {formatar_brl(liquido)}</div>
+                <div class="kpi-sub">Receita x Despesas</div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="kpi-card saldo">
+        <div class="kpi-inner">
+            <div class="kpi-icon saldo">{SVG_SALDO}</div>
+            <div class="kpi-body">
                 <div class="kpi-label">Saldo Inicial</div>
                 <div class="kpi-value">{formatar_brl(saldo_ini)}</div>
                 <div class="kpi-sub">Patrimônio acumulado</div>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="kpi-card caixa">
         <div class="kpi-inner">
             <div class="kpi-icon caixa">{SVG_CAIXA}</div>
@@ -201,13 +217,42 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-st.space(size="medium")
-# ── Tabela ───────────────────────────────────────────────────
-st.subheader("➡️ Tabela Detalhada", divider="blue")
+# ─────────────────────────────────────────────
+#  TABLES
+# ─────────────────────────────────────────────
+## Resumo por Igreja
+st.markdown('<div class="section-title">Resumo por Igreja</div>', unsafe_allow_html=True)
+### Agrupa por igreja e soma os valores
+df_sum = df.groupby("Igrejas").agg(
+    Receitas=("Receitas","sum"), 
+    Despesas=("Despesas","sum"),
+    Saldo_Inicial=("Saldo Inicial","sum"), 
+    #Caixa_Templo=("Caixa(Templo)","sum"),
+    Caixa_Templo=("Caixa(Templo)", "last"), 
+).reset_index()
+### Soma o agregado para mostrar um total geral
+df_sum["Líquido"] = df_sum["Receitas"] - df_sum["Despesas"]
+df_sum["Saldo_Final"] = df_sum["Saldo_Inicial"] + df_sum["Líquido"]
+### Ordena pela receita total (pode ser alterado para outro critério, como despesas ou saldo)
+df_sum = df_sum.sort_values("Receitas", ascending=False).reset_index(drop=True)
+
+for col in ["Receitas","Despesas","Saldo_Inicial","Caixa_Templo","Líquido","Saldo_Final"]:
+    df_sum[col] = df_sum[col].apply(formatar_brl)
 st.dataframe(
-    df_exibicao,
-    width="stretch",
-    hide_index=True,
+    df_sum.rename(columns={"Saldo_Inicial":"Saldo Inicial","Caixa_Templo":"Caixa (Templo)","Saldo_Final":"Saldo Final"}),
+    column_order=["Igrejas","Receitas","Despesas","Líquido","Saldo Inicial","Saldo Final","Caixa (Templo)"],
+    use_container_width=True, hide_index=True,
+)
+
+## Tabela Detalhada
+st.markdown('<div class="section-title">Tabela Detalhada</div>', unsafe_allow_html=True)
+st.dataframe(
+    df_exibicao.rename(columns={"Data Referência":"Referência"}),
+    use_container_width=True, 
+    hide_index=True, 
+    height=320,
     column_config=column_configuration,
 )
 
+
+st.space(size="medium")
