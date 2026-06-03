@@ -25,10 +25,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-home   = st.Page("pages/home.py",   title="Página Principal",         icon="🏷️", default=True)
-export = st.Page("pages/export.py", title="Relatório Assembleia Geral", icon="📊")
+home   = st.Page("pages/home.py",   title="Página Principal", default=True)
+relatorio = st.Page("pages/relatorio_mensal.py", title="Relatório Assembleia Geral")
+export = st.Page("pages/export.py", title="Exportar Dados")#, icon="📊")
 
-pg = st.navigation({"Navegação": [home, export]})
+pg = st.navigation({"Navegação": [home, relatorio, export]})
 pg.run()
 
 

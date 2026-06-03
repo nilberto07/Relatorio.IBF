@@ -25,8 +25,9 @@ df = conn.read(
 
 # Função para formatar valores monetários em BRL
 def formatar_brl(valor: float) -> str:
+    if valor == 0: return "—"
     valor_reais = valor / 100
-    return f"R$ {valor_reais:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") #if valor_reais > 0 else "—"
+    return f"R$ {valor_reais:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") 
 
 
 df_exibicao = df.copy()

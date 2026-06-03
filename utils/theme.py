@@ -11,6 +11,10 @@ BORDER    = "#E8D5C8"
 TEXT_DARK = "#1A0A02"
 TEXT_MID  = "#5A3D2B"
 TEXT_SOFT = "#9E7E6A"
+GREEN     = "#1E7A3C"
+GREEN_BG  = "#E8F7EC"
+RED       = "#C0392B"
+RED_BG    = "#FDEAEA"
 
 def load_css():
     st.markdown(f"""
@@ -21,6 +25,10 @@ def load_css():
         font-family: 'Source Sans 3', sans-serif;
         background-color: #ffffff;
         color: {TEXT_DARK};
+    }}
+    .main .block-container {{
+        padding: 2rem 2rem 3rem;
+        max-width: 1200px;
     }}
 
     /* ── Sidebar ── */
@@ -240,6 +248,188 @@ def load_css():
         .kpi-value {{ font-size: 1rem !important; }}
         .dash-header h1 {{ font-size: 1.4rem !important; }}
         .section-title {{ margin: 10px 0 7px; }}
+    }}
+
+    /*relatorio mensal*/
+    /* ── Page header ── */
+    .page-header {{
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        padding: 1.2rem 0 1.4rem;
+        border-bottom: 3px solid {BORDER};
+        margin-bottom: 2rem;
+    }}
+    .page-header-logo {{
+        width: 52px; height: 52px;
+        background: linear-gradient(135deg, {DARKEST}, {PRIMARY});
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }}
+    .page-header-text h1 {{
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.3rem, 3vw, 1.9rem);
+        font-weight: 700;
+        color: {DARKEST};
+        margin: 0 0 0.1rem;
+        line-height: 1.2;
+    }}
+    .page-header-text p {{
+        font-size: 0.78rem;
+        color: {TEXT_SOFT};
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+    }}
+
+    /* ── Month block ── */
+    .month-block {{
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid {BORDER};
+        box-shadow: 0 2px 8px rgba(90,31,5,0.06);
+    }}
+    .month-header {{
+        background: linear-gradient(90deg, {DARKEST} 0%, {DARK} 100%);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }}
+    .month-header h2 {{
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        letter-spacing: 0.02em;
+    }}
+    .month-pills {{
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }}
+    .month-pill {{
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+        letter-spacing: 0.06em;
+    }}
+    .pill-rec  {{ background: rgba(255,255,255,0.18); color: #fff; }}
+    .pill-desp {{ background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }}
+    .pill-liq-pos {{ background: {GREEN_BG}; color: {GREEN}; }}
+    .pill-liq-neg {{ background: {RED_BG};   color: {RED}; }}
+
+    /* ── Table ── */
+    .month-table-wrap {{
+        overflow-x: auto;
+        background: #fff;
+    }}
+    table.relatorio {{
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Source Sans 3', sans-serif;
+        font-size: 0.83rem;
+    }}
+    table.relatorio thead tr {{
+        background: #FDF6F0;
+    }}
+    table.relatorio thead th {{
+        padding: 10px 14px;
+        text-align: left;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: {TEXT_SOFT};
+        border-bottom: 2px solid {BORDER};
+        white-space: nowrap;
+    }}
+    table.relatorio thead th.num {{
+        text-align: right;
+    }}
+    table.relatorio tbody tr {{
+        border-bottom: 1px solid {BORDER};
+        transition: background 0.15s;
+    }}
+    table.relatorio tbody tr:hover {{
+        background: #FDF6F0;
+    }}
+    table.relatorio tbody td {{
+        padding: 9px 14px;
+        color: {TEXT_DARK};
+        white-space: nowrap;
+    }}
+    table.relatorio tbody td.num {{
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }}
+    table.relatorio tbody td.church {{
+        font-weight: 700;
+        color: {DARKEST};
+    }}
+    table.relatorio tfoot tr {{
+        background: {DARKEST};
+    }}
+    table.relatorio tfoot td {{
+        padding: 10px 14px;
+        font-weight: 700;
+        font-size: 0.83rem;
+        color: #fff !important;
+        white-space: nowrap;
+    }}
+    table.relatorio tfoot td.num {{
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }}
+
+    /* ── Badge ── */
+    .badge {{
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 9px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }}
+    .badge-pos {{ background: {GREEN_BG}; color: {GREEN}; }}
+    .badge-neg {{ background: {RED_BG};   color: {RED}; }}
+
+    /* ── Footer ── */
+    .rel-footer {{
+        margin-top: 2.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid {BORDER};
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.4rem;
+        font-size: 0.7rem;
+        color: {TEXT_SOFT};
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }}
+
+    /* ── Print ── */
+    @media print {{
+        @page {{ size: A4 portrait; margin: 12mm 10mm; }}
+        [data-testid="stSidebar"],
+        [data-testid="stHeader"],
+        [data-testid="collapsedControl"],
+        footer {{ display: none !important; }}
+        .main .block-container {{ padding: 0 !important; max-width: 100% !important; }}
+        .month-block {{ box-shadow: none !important; page-break-inside: avoid; margin-bottom: 14px; }}
+        table.relatorio {{ font-size: 0.74rem; }}
+        table.relatorio thead th,
+        table.relatorio tbody td,
+        table.relatorio tfoot td {{ padding: 6px 10px; }}
     }}
     </style>
     """, unsafe_allow_html=True)
