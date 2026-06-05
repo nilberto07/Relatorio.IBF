@@ -10,7 +10,7 @@ st.set_page_config(
     page_title="Dashboard Financeiro — IBF",
     page_icon="⛪",
     layout="wide",
-    initial_sidebar_state="collapsed",   # collapsed by default on mobile
+    #initial_sidebar_state="collapsed",   # collapsed by default on mobile
 )
 
 st.logo(
