@@ -251,185 +251,105 @@ def load_css():
     }}
 
     /*relatorio mensal*/
-    /* ── Page header ── */
+    
+    PRIMARY = "#BF5223"
+    DARK    = "#7D0911"
+    DARKEST = "#5A1F05"
+    BORDER  = "#E8D5C8"
+    TEXT_SOFT = "#9E7E6A"
+    TEXT_DARK = "#1A0A02"
+
     .page-header {{
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        padding: 1.2rem 0 1.4rem;
-        border-bottom: 3px solid {BORDER};
-        margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 1.1rem;
+    padding: 0.8rem 0 1.2rem;
+    border-bottom: 3px solid {BORDER};
+    margin-bottom: 1.8rem;
     }}
     .page-header-logo {{
-        width: 52px; height: 52px;
+        width: 48px; height: 48px; flex-shrink: 0;
         background: linear-gradient(135deg, {DARKEST}, {PRIMARY});
-        border-radius: 12px;
+        border-radius: 11px;
         display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
     }}
-    .page-header-text h1 {{
+    .page-header h1 {{
         font-family: 'Playfair Display', serif;
-        font-size: clamp(1.3rem, 3vw, 1.9rem);
-        font-weight: 700;
-        color: {DARKEST};
-        margin: 0 0 0.1rem;
-        line-height: 1.2;
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+        font-weight: 700; color: {DARKEST}; margin: 0 0 2px; line-height: 1.2;
     }}
-    .page-header-text p {{
-        font-size: 0.78rem;
-        color: {TEXT_SOFT};
-        margin: 0;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 600;
+    .page-header p {{
+        font-size: 0.76rem; color: {TEXT_SOFT}; margin: 0;
+        text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
     }}
 
     /* ── Month block ── */
     .month-block {{
-        margin-bottom: 2rem;
-        border-radius: 12px;
+        margin-bottom: 1.8rem;
+        border-radius: 11px;
         overflow: hidden;
         border: 1px solid {BORDER};
-        box-shadow: 0 2px 8px rgba(90,31,5,0.06);
+        box-shadow: 0 2px 8px rgba(90,31,5,.06);
     }}
     .month-header {{
         background: linear-gradient(90deg, {DARKEST} 0%, {DARK} 100%);
-        padding: 0.75rem 1.25rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
+        padding: 0.7rem 1.2rem;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 0.8rem; flex-wrap: wrap;
     }}
     .month-header h2 {{
         font-family: 'Playfair Display', serif;
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #fff;
-        margin: 0;
-        letter-spacing: 0.02em;
+        font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0;
     }}
-    .month-pills {{
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
+    .month-pills {{ display: flex; gap: 6px; flex-wrap: wrap; }}
+    .mpill {{
+        font-size: 0.67rem; font-weight: 700; padding: 2px 9px;
+        border-radius: 20px; white-space: nowrap; letter-spacing: .05em;
     }}
-    .month-pill {{
-        font-size: 0.68rem;
-        font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 20px;
-        white-space: nowrap;
-        letter-spacing: 0.06em;
-    }}
-    .pill-rec  {{ background: rgba(255,255,255,0.18); color: #fff; }}
-    .pill-desp {{ background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }}
-    .pill-liq-pos {{ background: {GREEN_BG}; color: {GREEN}; }}
-    .pill-liq-neg {{ background: {RED_BG};   color: {RED}; }}
+    .mpill-r  {{ background: rgba(255,255,255,.18); color: #fff; }}
+    .mpill-d  {{ background: rgba(255,255,255,.1);  color: rgba(255,255,255,.85); }}
+    .mpill-lp {{ background: #E8F7EC; color: #1E7A3C; }}
+    .mpill-ln {{ background: #FDEAEA; color: #C0392B; }}
 
     /* ── Table ── */
-    .month-table-wrap {{
-        overflow-x: auto;
-        background: #fff;
+    .month-table-wrap {{ overflow-x: auto; background: #fff; }}
+    table.rel {{
+        width: 100%; border-collapse: collapse;
+        font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem;
     }}
-    table.relatorio {{
-        width: 100%;
-        border-collapse: collapse;
-        font-family: 'Source Sans 3', sans-serif;
-        font-size: 0.83rem;
+    table.rel thead tr {{ background: #FDF6F0; }}
+    table.rel thead th {{
+        padding: 9px 13px; text-align: left;
+        font-size: 0.67rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .09em;
+        color: {TEXT_SOFT}; border-bottom: 2px solid {BORDER}; white-space: nowrap;
     }}
-    table.relatorio thead tr {{
-        background: #FDF6F0;
+    table.rel thead th.r {{ text-align: right; }}
+    table.rel tbody tr {{ border-bottom: 1px solid {BORDER}; }}
+    table.rel tbody tr:hover {{ background: #FDF6F0; }}
+    table.rel tbody td {{ padding: 8px 13px; color: {TEXT_DARK}; white-space: nowrap; }}
+    table.rel tbody td.r  {{ text-align: right; font-variant-numeric: tabular-nums; }}
+    table.rel tbody td.ch {{ font-weight: 700; color: {DARKEST}; }}
+    table.rel tfoot tr    {{ background: {DARKEST}; }}
+    table.rel tfoot td    {{
+        padding: 9px 13px; font-weight: 700; font-size: 0.82rem; color: #fff; white-space: nowrap;
     }}
-    table.relatorio thead th {{
-        padding: 10px 14px;
-        text-align: left;
-        font-size: 0.68rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: {TEXT_SOFT};
-        border-bottom: 2px solid {BORDER};
-        white-space: nowrap;
-    }}
-    table.relatorio thead th.num {{
-        text-align: right;
-    }}
-    table.relatorio tbody tr {{
-        border-bottom: 1px solid {BORDER};
-        transition: background 0.15s;
-    }}
-    table.relatorio tbody tr:hover {{
-        background: #FDF6F0;
-    }}
-    table.relatorio tbody td {{
-        padding: 9px 14px;
-        color: {TEXT_DARK};
-        white-space: nowrap;
-    }}
-    table.relatorio tbody td.num {{
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }}
-    table.relatorio tbody td.church {{
-        font-weight: 700;
-        color: {DARKEST};
-    }}
-    table.relatorio tfoot tr {{
-        background: {DARKEST};
-    }}
-    table.relatorio tfoot td {{
-        padding: 10px 14px;
-        font-weight: 700;
-        font-size: 0.83rem;
-        color: #fff !important;
-        white-space: nowrap;
-    }}
-    table.relatorio tfoot td.num {{
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-    }}
+    table.rel tfoot td.r  {{ text-align: right; font-variant-numeric: tabular-nums; }}
 
-    /* ── Badge ── */
-    .badge {{
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 700;
-        padding: 2px 9px;
-        border-radius: 20px;
-        white-space: nowrap;
-    }}
-    .badge-pos {{ background: {GREEN_BG}; color: {GREEN}; }}
-    .badge-neg {{ background: {RED_BG};   color: {RED}; }}
-
-    /* ── Footer ── */
+    /* ── Rel footer ── */
     .rel-footer {{
-        margin-top: 2.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid {BORDER};
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 0.4rem;
-        font-size: 0.7rem;
-        color: {TEXT_SOFT};
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
+        margin-top: 2rem; padding-top: 0.9rem; border-top: 1px solid {BORDER};
+        display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem;
+        font-size: 0.7rem; color: {TEXT_SOFT}; font-weight: 600;
+        text-transform: uppercase; letter-spacing: .06em;
     }}
 
-    /* ── Print ── */
     @media print {{
         @page {{ size: A4 portrait; margin: 12mm 10mm; }}
-        [data-testid="stSidebar"],
-        [data-testid="stHeader"],
-        [data-testid="collapsedControl"],
-        footer {{ display: none !important; }}
+        [data-testid="stSidebar"], [data-testid="stHeader"],
+        [data-testid="collapsedControl"], footer {{ display: none !important; }}
         .main .block-container {{ padding: 0 !important; max-width: 100% !important; }}
-        .month-block {{ box-shadow: none !important; page-break-inside: avoid; margin-bottom: 14px; }}
-        table.relatorio {{ font-size: 0.74rem; }}
-        table.relatorio thead th,
-        table.relatorio tbody td,
-        table.relatorio tfoot td {{ padding: 6px 10px; }}
+        .month-block {{ box-shadow: none !important; page-break-inside: avoid; margin-bottom: 12px; }}
+        table.rel {{ font-size: 0.72rem; }}
+        table.rel thead th, table.rel tbody td, table.rel tfoot td {{ padding: 5px 9px; }}
     }}
     </style>
     """, unsafe_allow_html=True)

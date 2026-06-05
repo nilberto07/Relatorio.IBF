@@ -2,8 +2,8 @@ import pandas as pd
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import ssl
-from utils.theme import load_css
 from datetime import datetime
+from utils.theme import load_css
 
 load_css()
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -55,112 +55,6 @@ def badge(v: float) -> str:
         f'{seta} {texto}</span>'
     )
 
-# ─────────────────────────────────────────────
-#  CSS EXTRA para o relatório mensal
-# ─────────────────────────────────────────────
-PRIMARY = "#BF5223"
-DARK    = "#7D0911"
-DARKEST = "#5A1F05"
-BORDER  = "#E8D5C8"
-TEXT_SOFT = "#9E7E6A"
-TEXT_DARK = "#1A0A02"
-
-st.markdown(f"""
-<style>
-.page-header {{
-    display: flex; align-items: center; gap: 1.1rem;
-    padding: 0.8rem 0 1.2rem;
-    border-bottom: 3px solid {BORDER};
-    margin-bottom: 1.8rem;
-}}
-.page-header-logo {{
-    width: 48px; height: 48px; flex-shrink: 0;
-    background: linear-gradient(135deg, {DARKEST}, {PRIMARY});
-    border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-}}
-.page-header h1 {{
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
-    font-weight: 700; color: {DARKEST}; margin: 0 0 2px; line-height: 1.2;
-}}
-.page-header p {{
-    font-size: 0.76rem; color: {TEXT_SOFT}; margin: 0;
-    text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
-}}
-
-/* ── Month block ── */
-.month-block {{
-    margin-bottom: 1.8rem;
-    border-radius: 11px;
-    overflow: hidden;
-    border: 1px solid {BORDER};
-    box-shadow: 0 2px 8px rgba(90,31,5,.06);
-}}
-.month-header {{
-    background: linear-gradient(90deg, {DARKEST} 0%, {DARK} 100%);
-    padding: 0.7rem 1.2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 0.8rem; flex-wrap: wrap;
-}}
-.month-header h2 {{
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0;
-}}
-.month-pills {{ display: flex; gap: 6px; flex-wrap: wrap; }}
-.mpill {{
-    font-size: 0.67rem; font-weight: 700; padding: 2px 9px;
-    border-radius: 20px; white-space: nowrap; letter-spacing: .05em;
-}}
-.mpill-r  {{ background: rgba(255,255,255,.18); color: #fff; }}
-.mpill-d  {{ background: rgba(255,255,255,.1);  color: rgba(255,255,255,.85); }}
-.mpill-lp {{ background: #E8F7EC; color: #1E7A3C; }}
-.mpill-ln {{ background: #FDEAEA; color: #C0392B; }}
-
-/* ── Table ── */
-.month-table-wrap {{ overflow-x: auto; background: #fff; }}
-table.rel {{
-    width: 100%; border-collapse: collapse;
-    font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem;
-}}
-table.rel thead tr {{ background: #FDF6F0; }}
-table.rel thead th {{
-    padding: 9px 13px; text-align: left;
-    font-size: 0.67rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .09em;
-    color: {TEXT_SOFT}; border-bottom: 2px solid {BORDER}; white-space: nowrap;
-}}
-table.rel thead th.r {{ text-align: right; }}
-table.rel tbody tr {{ border-bottom: 1px solid {BORDER}; }}
-table.rel tbody tr:hover {{ background: #FDF6F0; }}
-table.rel tbody td {{ padding: 8px 13px; color: {TEXT_DARK}; white-space: nowrap; }}
-table.rel tbody td.r  {{ text-align: right; font-variant-numeric: tabular-nums; }}
-table.rel tbody td.ch {{ font-weight: 700; color: {DARKEST}; }}
-table.rel tfoot tr    {{ background: {DARKEST}; }}
-table.rel tfoot td    {{
-    padding: 9px 13px; font-weight: 700; font-size: 0.82rem; color: #fff; white-space: nowrap;
-}}
-table.rel tfoot td.r  {{ text-align: right; font-variant-numeric: tabular-nums; }}
-
-/* ── Rel footer ── */
-.rel-footer {{
-    margin-top: 2rem; padding-top: 0.9rem; border-top: 1px solid {BORDER};
-    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem;
-    font-size: 0.7rem; color: {TEXT_SOFT}; font-weight: 600;
-    text-transform: uppercase; letter-spacing: .06em;
-}}
-
-@media print {{
-    @page {{ size: A4 portrait; margin: 12mm 10mm; }}
-    [data-testid="stSidebar"], [data-testid="stHeader"],
-    [data-testid="collapsedControl"], footer {{ display: none !important; }}
-    .main .block-container {{ padding: 0 !important; max-width: 100% !important; }}
-    .month-block {{ box-shadow: none !important; page-break-inside: avoid; margin-bottom: 12px; }}
-    table.rel {{ font-size: 0.72rem; }}
-    table.rel thead th, table.rel tbody td, table.rel tfoot td {{ padding: 5px 9px; }}
-}}
-</style>
-""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  SIDEBAR — FILTROS
@@ -289,7 +183,7 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
 # ─────────────────────────────────────────────
 st.markdown(f"""
 <div class="page-header">
-    <div class="page-header-logo">
+    <!-- <div class="page-header-logo">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
             <path d="M12 2v3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M10.5 4h3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
@@ -299,7 +193,7 @@ st.markdown(f"""
             <rect x="10.5" y="8" width="3" height="3" rx=".5"
                   stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
         </svg>
-    </div>
+    </div> -->
     <div>
         <h1>Relatório Financeiro IBF</h1>
         <p>Três últimos meses · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
@@ -328,9 +222,9 @@ else:
 # ─────────────────────────────────────────────
 #  FOOTER
 # ─────────────────────────────────────────────
-st.markdown(f"""
-<div class="rel-footer">
-    <span>&#9642; IBF — Relatório Financeiro Mensal</span>
-    <span>Gerado em {datetime.now().strftime('%d/%m/%Y às %H:%M')}</span>
-</div>
-""", unsafe_allow_html=True)
+#st.markdown(f"""
+#<div class="rel-footer">
+#    <span>&#9642; IBF — Relatório Financeiro Mensal</span>
+#    <span>Gerado em {datetime.now().strftime('%d/%m/%Y às %H:%M')}</span>
+#</div>
+#""", unsafe_allow_html=True)
