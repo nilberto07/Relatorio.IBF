@@ -4,6 +4,7 @@ from streamlit_gsheets import GSheetsConnection
 import ssl
 from datetime import datetime
 from utils.theme import load_css
+import streamlit.components.v1 as components
 
 load_css()
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -70,9 +71,9 @@ with st.sidebar:
                 border-bottom:1px solid rgba(255,255,255,0.3);'>Filtros</div>
     """, unsafe_allow_html=True)
 
-    filtro_igrejas = st.multiselect("Igrejas:", options=igrejas_disp, placeholder="Todas as igrejas")
-    filtro_ano     = st.multiselect("Ano:",     options=anos_disp,    placeholder="Todos os anos")
-    filtro_mes     = st.multiselect("Mês:",     options=meses_disp,   placeholder="Todos os meses")
+    filtro_igrejas = st.multiselect("Igrejas:", options=igrejas_disp, placeholder="Selecione...")
+    filtro_ano     = st.multiselect("Ano:",     options=anos_disp,    placeholder="Selecione...")
+    filtro_mes     = st.multiselect("Mês:",     options=meses_disp,   placeholder="Selecione...")
 
     st.markdown("""
     <hr style='border-color:rgba(255,255,255,0.2); margin:1.5rem 0 1rem;'>
