@@ -183,7 +183,7 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
 # ─────────────────────────────────────────────
 st.markdown(f"""
 <div class="page-header">
-    <!-- <div class="page-header-logo">
+   <!-- <div class="page-header-logo">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
             <path d="M12 2v3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M10.5 4h3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
@@ -194,10 +194,10 @@ st.markdown(f"""
                   stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
         </svg>
     </div> -->
-    <div>
+    <div class="dash-header">
         <h1>Relatório Financeiro IBF</h1>
         <p>Três últimos meses · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
-    </div>
+    </div> 
 </div>
 """, unsafe_allow_html=True)
 
@@ -209,6 +209,7 @@ periodos = (
     .drop_duplicates()
     .sort_values(["Ano", "Mês"], ascending=False)
     .head(3)
+    .sort_values(["Ano", "Mês"], ascending=True)
     .values.tolist()
 )
 

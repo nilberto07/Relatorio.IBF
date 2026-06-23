@@ -8,9 +8,9 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 
 st.set_page_config(
     page_title="Dashboard Financeiro — IBF",
-    page_icon="⛪",
+    page_icon="styles/logo.png",
     layout="wide",
-    #initial_sidebar_state="collapsed",   # collapsed by default on mobile
+    initial_sidebar_state="collapsed",   # collapsed by default on mobile
 )
 
 st.logo(
@@ -18,18 +18,17 @@ st.logo(
     size="large",
     )
 
-st.markdown("""
-<div class="dash-header">
-    <h1>Dashboard Financeiro</h1>
-    <p>Relatório · Assembleia Geral</p>
-</div>
-""", unsafe_allow_html=True)
+#st.markdown("""
+#<div class="dash-header">
+#    <h1>Igreja da Filadélfia</h1>
+#    <p>Relatório · Assembleia Geral</p>
+#</div>
+#""", unsafe_allow_html=True)
 
-home   = st.Page("pages/home.py",   title="Página Principal", default=True)
-relatorio = st.Page("pages/relatorio_mensal.py", title="Relatório Assembleia Geral")
-export = st.Page("pages/export.py", title="Exportar Dados")#, icon="📊")
+relatorio = st.Page("pages/relatorio_mensal.py", title="Relatório Assembleia Geral", default=True)
+home   = st.Page("pages/home.py",   title="Dashboard Financeiro")
 
-pg = st.navigation({"Navegação": [home, relatorio, export]})
+pg = st.navigation({"Navegação": [relatorio, home]})
 pg.run()
 
 

@@ -94,7 +94,7 @@ with st.sidebar:
                 </div>
     """, unsafe_allow_html=True)
 
-    filtro_igrejas = st.multiselect(label="Igrejas:", options=igrejas_disp, placeholder="Selecione uma ou mais igrejas")
+    filtro_igrejas = st.multiselect(label="Igrejas:", options=igrejas_disp, placeholder="Todas as igrejas")
     filtro_ano = st.multiselect("Ano:", options=anos_disp, placeholder="Todos os anos")
     filtro_mes = st.multiselect("Mês:", options=meses_disp, placeholder="Todos os meses")
 
@@ -116,7 +116,7 @@ with st.sidebar:
         ], df[
             df["Mês"].isin(filtro_mes)
         ]
-    st.space(size="medium")
+
     st.markdown("""
     <hr style='border-color:rgba(255,255,255,255); margin-bottom:1.5rem;'>
     <div style='text-align:center; padding: 2rem 0 1.5rem;'>
@@ -162,7 +162,12 @@ SVG_DESPESAS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><pat
 SVG_SALDO    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#5A1F05" stroke-width="1.8"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2Z" stroke="#5A1F05" stroke-width="1.8"/><circle cx="12" cy="14" r="2" stroke="#5A1F05" stroke-width="1.8"/></svg>'
 SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
 
+
 st.markdown(f"""
+<div class="dash-header">
+    <h1>Dashboard Financeiro</h1>
+    <p>Relatório · Assembleia Geral</p>
+</div>
 <div class="section-title">Resumo Financeiro</div>
 <div class="kpi-grid">
     <div class="kpi-card receitas">
