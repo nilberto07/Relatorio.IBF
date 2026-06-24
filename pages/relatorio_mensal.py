@@ -4,7 +4,6 @@ from streamlit_gsheets import GSheetsConnection
 import ssl
 from datetime import datetime
 from utils.theme import load_css
-import streamlit.components.v1 as components
 
 load_css()
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -46,16 +45,14 @@ def formatar_brl(valor: float) -> str:
 
 def badge(v: float) -> str:
     seta  = "&#9650;" if v >= 0 else "&#9660;"
-    cls   = "badge-pos" if v >= 0 else "badge-neg"
-    bg    = "#E8F7EC"  if v >= 0 else "#FDEAEA"
-    cor   = "#1E7A3C"  if v >= 0 else "#C0392B"
+    bg    = "#E8F7EC" if v >= 0 else "#FDEAEA"
+    cor   = "#1E7A3C" if v >= 0 else "#C0392B"
     texto = formatar_brl(v)
     return (
-        f'<span style="display:inline-block;font-size:0.7rem;font-weight:700;'
+        '<span style="display:inline-block;font-size:0.7rem;font-weight:700;'
         f'padding:2px 8px;border-radius:20px;background:{bg};color:{cor};white-space:nowrap">'
         f'{seta} {texto}</span>'
     )
-
 
 # ─────────────────────────────────────────────
 #  SIDEBAR — FILTROS
@@ -95,7 +92,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  APLICA FILTROS — sempre no df numérico
+#  APLICA FILTROS
 # ─────────────────────────────────────────────
 df = df_raw.copy()
 if filtro_igrejas:
@@ -106,15 +103,26 @@ if filtro_mes:
     df = df[df["Mês"].isin(filtro_mes)]
 
 # ─────────────────────────────────────────────
-#  3 ÚLTIMOS MESES
+#  PAGE HEADER
+# ─────────────────────────────────────────────
+st.markdown(f"""
+<div class="page-header">
+    <div class="dash-header">
+        <h1>Relatório Financeiro IBF</h1>
+        <p>Três últimos meses · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+#  RENDER MONTH BLOCK
 # ─────────────────────────────────────────────
 def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
-    # ── Todos os cálculos ANTES de qualquer formatação ──
+    # Cálculos ANTES de qualquer formatação
     df_mes = df_mes.sort_values("Receitas", ascending=False).copy()
-    df_mes["Líquido"]    = df_mes["Receitas"] - df_mes["Despesas"]
-    df_mes["Saldo Final"] = df_mes["Saldo Inicial"] + df_mes["Líquido"]
+    df_mes["Liquido"]     = df_mes["Receitas"] - df_mes["Despesas"]
+    df_mes["Saldo Final"] = df_mes["Saldo Inicial"] + df_mes["Liquido"]
 
-    # Totais numéricos
     tot_rec = df_mes["Receitas"].sum()
     tot_des = df_mes["Despesas"].sum()
     tot_liq = tot_rec - tot_des
@@ -123,84 +131,92 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
     df_cx   = df_mes[df_mes["Caixa(Templo)"] > 0].sort_values("Caixa(Templo)", ascending=False)
     tot_cx  = df_cx["Caixa(Templo)"].iloc[0] if not df_cx.empty else 0.0
 
-    # Pills do cabeçalho
+    # Observações — monta como lista de strings e junta com join
+    obs_rows = df_mes[["Igrejas", "Observações"]].copy()
+    obs_rows = obs_rows[
+        obs_rows["Observações"].notna() &
+        (obs_rows["Observações"].astype(str).str.strip() != "") &
+        (obs_rows["Observações"].astype(str).str.strip() != "—")
+    ]
+
+    if not obs_rows.empty:
+        partes = []
+        for _, row in obs_rows.iterrows():
+            igreja = str(row["Igrejas"])
+            texto  = str(row["Observações"])
+            partes.append(
+                '<span style="color:#5A1F05;font-weight:700">' + igreja + ':</span> '
+                '<span style="color:#5A3D2B">' + texto + '</span>'
+            )
+        obs_html = (
+            '<div style="padding:6px 16px 8px;background:#FDF6F0;border-top:1px solid #E8D5C8;'
+            'font-size:0.75rem;line-height:1.8">'
+            '<span style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;'
+            'color:#9E7E6A;margin-right:8px">Obs.:</span>'
+            + ' &nbsp;·&nbsp; '.join(partes) +
+            '</div>'
+        )
+    else:
+        obs_html = ""
+
+    # Pills
     liq_cls  = "mpill-lp" if tot_liq >= 0 else "mpill-ln"
     liq_seta = "&#9650;" if tot_liq >= 0 else "&#9660;"
 
-    # ── Linhas da tabela ──
-    rows_html = ""
+    # Linhas da tabela
+    linhas = []
     for _, row in df_mes.iterrows():
         cx = formatar_brl(row["Caixa(Templo)"]) if row["Caixa(Templo)"] > 0 else "—"
-        rows_html += f"""
-        <tr>
-            <td class="ch">{row['Igrejas']}</td>
-            <td class="r">{formatar_brl(row['Receitas'])}</td>
-            <td class="r">{formatar_brl(row['Despesas'])}</td>
-            <td class="r">{badge(row['Líquido'])}</td>
-            <td class="r">{formatar_brl(row['Saldo Inicial'])}</td>
-            <td class="r">{formatar_brl(row['Saldo Final'])}</td>
-            <td class="r">{cx}</td>
-        </tr>"""
+        linhas.append(
+            '<tr>'
+            '<td class="ch">' + str(row["Igrejas"]) + '</td>'
+            '<td class="r">'  + formatar_brl(row["Receitas"])     + '</td>'
+            '<td class="r">'  + formatar_brl(row["Despesas"])     + '</td>'
+            '<td class="r">'  + badge(row["Liquido"])             + '</td>'
+            '<td class="r">'  + formatar_brl(row["Saldo Inicial"])+ '</td>'
+            '<td class="r">'  + formatar_brl(row["Saldo Final"])  + '</td>'
+            '<td class="r">'  + cx                                + '</td>'
+            '</tr>'
+        )
+    rows_html = "".join(linhas)
+    cx_total  = formatar_brl(tot_cx) if tot_cx > 0 else "—"
 
-    cx_total = formatar_brl(tot_cx) if tot_cx > 0 else "—"
-
-    return f"""
-<div class="month-block">
-    <div class="month-header">
-        <h2>{label}</h2>
-        <div class="month-pills">
-            <span class="mpill mpill-r">Rec: {formatar_brl(tot_rec)}</span>
-            <span class="mpill mpill-d">Desp: {formatar_brl(tot_des)}</span>
-            <span class="mpill {liq_cls}">{liq_seta} {formatar_brl(tot_liq)}</span>
-        </div>
-    </div>
-    <div class="month-table-wrap">
-        <table class="rel">
-            <thead><tr>
-                <th>Igreja</th>
-                <th class="r">Receitas</th>
-                <th class="r">Despesas</th>
-                <th class="r">Líquido</th>
-                <th class="r">Saldo Inicial</th>
-                <th class="r">Saldo Final</th>
-                <th class="r">Caixa (Templo)</th>
-            </tr></thead>
-            <tbody>{rows_html}</tbody>
-            <tfoot><tr>
-                <td><strong>Total</strong></td>
-                <td class="r">{formatar_brl(tot_rec)}</td>
-                <td class="r">{formatar_brl(tot_des)}</td>
-                <td class="r">{badge(tot_liq)}</td>
-                <td class="r">{formatar_brl(tot_si)}</td>
-                <td class="r">{formatar_brl(tot_sf)}</td>
-                <td class="r">{cx_total}</td>
-            </tr></tfoot>
-        </table>
-    </div>
-</div>"""
-
-# ─────────────────────────────────────────────
-#  PAGE HEADER
-# ─────────────────────────────────────────────
-st.markdown(f"""
-<div class="page-header">
-   <!-- <div class="page-header-logo">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2v3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M10.5 4h3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M5 10L12 5l7 5v11H5z" stroke="white" stroke-width="1.7"
-                  stroke-linejoin="round" fill="rgba(255,255,255,0.15)"/>
-            <path d="M9 21v-6a3 3 0 0 1 6 0v6" stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
-            <rect x="10.5" y="8" width="3" height="3" rx=".5"
-                  stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
-        </svg>
-    </div> -->
-    <div class="dash-header">
-        <h1>Relatório Financeiro IBF</h1>
-        <p>Três últimos meses · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
-    </div> 
-</div>
-""", unsafe_allow_html=True)
+    return (
+        '<div class="month-block">'
+          '<div class="month-header">'
+            '<h2>' + label + '</h2>'
+            '<div class="month-pills">'
+              '<span class="mpill mpill-r">Rec: '  + formatar_brl(tot_rec) + '</span>'
+              '<span class="mpill mpill-d">Desp: ' + formatar_brl(tot_des) + '</span>'
+              '<span class="mpill ' + liq_cls + '">' + liq_seta + ' ' + formatar_brl(tot_liq) + '</span>'
+            '</div>'
+          '</div>'
+          '<div class="month-table-wrap">'
+            '<table class="rel">'
+              '<thead><tr>'
+                '<th>Igreja</th>'
+                '<th class="r">Receitas</th>'
+                '<th class="r">Despesas</th>'
+                '<th class="r">Líquido</th>'
+                '<th class="r">Saldo Inicial</th>'
+                '<th class="r">Saldo Final</th>'
+                '<th class="r">Caixa (Templo)</th>'
+              '</tr></thead>'
+              '<tbody>' + rows_html + '</tbody>'
+              '<tfoot><tr>'
+                '<td><strong>Total</strong></td>'
+                '<td class="r">' + formatar_brl(tot_rec) + '</td>'
+                '<td class="r">' + formatar_brl(tot_des) + '</td>'
+                '<td class="r">' + badge(tot_liq)        + '</td>'
+                '<td class="r">' + formatar_brl(tot_si)  + '</td>'
+                '<td class="r">' + formatar_brl(tot_sf)  + '</td>'
+                '<td class="r">' + cx_total              + '</td>'
+              '</tr></tfoot>'
+            '</table>'
+          '</div>'
+          + obs_html +
+        '</div>'
+    )
 
 # ─────────────────────────────────────────────
 #  RENDERIZA OS 3 ÚLTIMOS MESES

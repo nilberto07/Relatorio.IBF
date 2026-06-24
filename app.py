@@ -26,7 +26,7 @@ st.logo(
 #""", unsafe_allow_html=True)
 
 relatorio = st.Page("pages/relatorio_mensal.py", title="Relatório Assembleia Geral", default=True)
-home   = st.Page("pages/home.py",   title="Dashboard Financeiro")
+home   = st.Page("pages/home.py",   title="Relatório Detalhado")
 
 pg = st.navigation({"Navegação": [relatorio, home]})
 pg.run()
