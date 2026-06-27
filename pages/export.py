@@ -54,20 +54,7 @@ def badge(v: float) -> str:
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap');
-
-/* ── Reset geral ── */
-html, body, [class*="css"] {
-    font-family: 'Source Sans 3', sans-serif;
-    background: #fff;
-}
-[data-testid="stHeader"]  { display: none !important; }
-[data-testid="stToolbar"] { display: none !important; }
-footer                    { display: none !important; }
-.main .block-container {
-    padding: 0 0.5rem 0.5rem !important;
-    max-width: 100% !important;
-}
-        
+    
 .st-emotion-cache-19ehcf5 table {
     margin-bottom: 0 !important;
 }
@@ -163,7 +150,7 @@ footer                    { display: none !important; }
 }
 .pf-month-header h2 {
     font-family: 'Playfair Display', serif;
-    font-size: 0.8rem;
+    font-size: 1.0rem;
     font-weight: 700;
     color: #fff;
     margin: 0;
@@ -171,7 +158,7 @@ footer                    { display: none !important; }
 }
 .pf-pills { display: flex; gap: 3px; flex-wrap: nowrap; }
 .pf-pill {
-    font-size: 0.52rem;
+    font-size: 0.65rem;
     font-weight: 700;
     padding: 1px 5px;
     border-radius: 20px;
