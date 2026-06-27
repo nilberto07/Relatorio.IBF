@@ -163,7 +163,7 @@ footer                    { display: none !important; }
 }
 .pf-month-header h2 {
     font-family: 'Playfair Display', serif;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #fff;
     margin: 0;
@@ -187,14 +187,14 @@ table.pft {
     width: 100%;
     border-collapse: collapse;
     font-family: 'Source Sans 3', sans-serif;
-    font-size: 0.65rem;        /* compacto para caber horizontal */
+    font-size: 0.75rem;        /* compacto para caber horizontal */
     table-layout: fixed;       /* distribui colunas igualmente */
 }
 table.pft thead tr { background: #FDF6F0; }
 table.pft thead th {
     padding: 3px 4px;
     text-align: left;
-    font-size: 0.54rem;
+    font-size: 0.64rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .05em;
@@ -222,7 +222,7 @@ table.pft tfoot tr  { background: #5A1F05; }
 table.pft tfoot td  {
     padding: 3px 4px;
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: #fff;
     white-space: nowrap;
 }
@@ -303,21 +303,21 @@ table.pft tfoot td.r { text-align: right; font-variant-numeric: tabular-nums; }
 
     /* Cabeçalho ultra-compacto */
     .pf-header      { padding-bottom: 4px; margin-bottom: 5px; }
-    .pf-header h1   { font-size: 0.72rem; }
-    .pf-header p    { font-size: 0.48rem; }
+    .pf-header h1   { font-size: 0.95rem; }
+    .pf-header p    { font-size: 0.57rem; }
     .pf-logo        { width: 22px; height: 22px; border-radius: 4px; }
 
     /* Mês header */
     .pf-month           { margin-bottom: 4px; border-radius: 4px; }
     .pf-month-header    { padding: 2px 6px; }
-    .pf-month-header h2 { font-size: 0.62rem; }
-    .pf-pill            { font-size: 0.46rem; padding: 0px 4px; }
+    .pf-month-header h2 { font-size: 0.72rem; }
+    .pf-pill            { font-size: 0.56rem; padding: 0px 4px; }
 
     /* Tabela máxima compactação */
-    table.pft           { font-size: 0.48rem; }
-    table.pft thead th  { font-size: 0.44rem; padding: 2px 2px; }
+    table.pft           { font-size: 0.62rem; }
+    table.pft thead th  { font-size: 0.59rem; padding: 2px 2px; }
     table.pft tbody td  { padding: 1px 2px; }
-    table.pft tfoot td  { padding: 2px 2px; font-size: 0.48rem; }
+    table.pft tfoot td  { padding: 2px 2px; font-size: 0.59rem; }
 
     .pf-obs             { font-size: 0.44rem; padding: 1px 5px; }
     .pf-footer          { font-size: 0.44rem; margin-top: 3px; padding-top: 2px; }
