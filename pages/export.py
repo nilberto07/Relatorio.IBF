@@ -315,11 +315,12 @@ table.pft tfoot td.r { text-align: right; font-variant-numeric: tabular-nums; }
 
     /* Tabela máxima compactação */
     table.pft           { font-size: 0.62rem; }
+    table.pft thead tr  { background: #ffffff; }
     table.pft thead th  { font-size: 0.59rem; padding: 2px 2px; }
     table.pft tbody td  { padding: 1px 2px; }
     table.pft tfoot td  { padding: 2px 2px; font-size: 0.59rem; }
 
-    .pf-obs             { font-size: 0.44rem; padding: 1px 5px; }
+    .pf-obs             { font-size: 0.44rem; padding: 1px 5px; background: #ffffff; }
     .pf-footer          { font-size: 0.44rem; margin-top: 3px; padding-top: 2px; }
 }
 </style>
