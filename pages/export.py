@@ -17,7 +17,7 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 df_raw = conn.read(
     worksheet=ABAS["Página1"],
     ttl=0,
-    usecols=["Ano", "Mês", "Data Referência", "Igrejas",
+    usecols=["Indice", "Ano", "Mês", "Data Referência", "Igrejas",
              "Receitas", "Despesas", "Saldo Inicial", "Caixa(Templo)", "Observações"],
 )
 
@@ -396,7 +396,8 @@ def build_panfleto(periodos, df) -> str:
     blocos = ""
     for ano, mes, label in periodos:
         df_mes = df[(df["Ano"] == ano) & (df["Mês"] == mes)].copy()
-        df_mes = df_mes.sort_values("Receitas", ascending=False)
+        #df_mes = df_mes.sort_values("Receitas", ascending=False)
+        df_mes = df_mes.sort_values("Indice", ascending=True)
         df_mes["Liquido"]     = df_mes["Receitas"] - df_mes["Despesas"]
         df_mes["Saldo Final"] = df_mes["Saldo Inicial"] + df_mes["Liquido"]
 

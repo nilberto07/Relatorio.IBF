@@ -21,7 +21,7 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 df_raw = conn.read(
     worksheet=ABAS["Página1"],
     ttl=0,
-    usecols=["Ano", "Mês", "Data Referência", "Igrejas",
+    usecols=["Indice", "Ano", "Mês", "Data Referência", "Igrejas",
              "Receitas", "Despesas", "Saldo Inicial", "Caixa(Templo)", "Observações"],
 )
 
@@ -119,7 +119,8 @@ st.markdown(f"""
 # ─────────────────────────────────────────────
 def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
     # Cálculos ANTES de qualquer formatação
-    df_mes = df_mes.sort_values("Receitas", ascending=False).copy()
+    #df_mes = df_mes.sort_values("Receitas", ascending=False).copy()
+    df_mes = df_mes.sort_values("Indice", ascending=True).copy()
     df_mes["Liquido"]     = df_mes["Receitas"] - df_mes["Despesas"]
     df_mes["Saldo Final"] = df_mes["Saldo Inicial"] + df_mes["Liquido"]
 
