@@ -25,3 +25,6 @@ backgroundColor = "#ffffff"
 
 [ui]
 hideTopBar = false
+
+[server]
+enableStaticServing = true
