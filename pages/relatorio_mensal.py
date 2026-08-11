@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import ssl
+from relatorio_impressao import botao_download_relatorio
 from datetime import datetime
 from utils.theme import load_css
 
@@ -72,6 +73,8 @@ with st.sidebar:
     filtro_ano     = st.multiselect("Ano:",     options=anos_disp,    placeholder="Selecione...")
     filtro_mes     = st.multiselect("Mês:",     options=meses_disp,   placeholder="Selecione...")
 
+    botao_download_relatorio(df_raw)
+
     st.markdown("""
     <hr style='border-color:rgba(255,255,255,0.2); margin:1.5rem 0 1rem;'>
     <div style='text-align:center; padding: 1rem 0'>
@@ -90,6 +93,7 @@ with st.sidebar:
             Sistema Financeiro</div>
     </div>
     """, unsafe_allow_html=True)
+
 
 # ─────────────────────────────────────────────
 #  APLICA FILTROS

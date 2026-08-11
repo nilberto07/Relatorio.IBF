@@ -27,9 +27,9 @@ st.logo(
 
 relatorio = st.Page("pages/relatorio_mensal.py", title="Relatório Assembleia Geral", default=True)
 home   = st.Page("pages/home.py",   title="Relatório Detalhado")
-export   = st.Page("pages/export.py",   title="Exportar Relatório da Assembleia")
+#export   = st.Page("pages/export.py",   title="Exportar Relatório da Assembleia")
 
-pg = st.navigation({"Navegação": [relatorio, home, export]})
+pg = st.navigation({"Navegação": [relatorio, home]})
 pg.run()
 
 
