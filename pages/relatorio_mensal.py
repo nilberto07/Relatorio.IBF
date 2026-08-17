@@ -12,13 +12,8 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 # ─────────────────────────────────────────────
 #  CONEXÃO
 # ─────────────────────────────────────────────
-ABAS = {
-    "Página1": "0",
-    "Página2": "1128666635",
-    "Página3": "1066751161",
-}
-conn = st.connection("gsheets", type=GSheetsConnection)
-
+ABAS = {"Página1": "0", "Página2": "1128666635", "Página3": "1066751161"}
+conn   = st.connection("gsheets", type=GSheetsConnection)
 df_raw = conn.read(
     worksheet=ABAS["Página1"],
     ttl=0,
@@ -26,14 +21,8 @@ df_raw = conn.read(
              "Receitas", "Despesas", "Saldo Inicial", "Caixa(Templo)", "Observações"],
 )
 
-# ─────────────────────────────────────────────
-#  TIPOS NUMÉRICOS — sempre antes de qualquer cálculo
-# ─────────────────────────────────────────────
-for col in ["Receitas", "Despesas", "Saldo Inicial", "Caixa(Templo)"]:
+for col in ["Receitas", "Despesas", "Saldo Inicial", "Caixa(Templo)", "Ano", "Mês"]:
     df_raw[col] = pd.to_numeric(df_raw[col], errors="coerce").fillna(0)
-
-df_raw["Ano"] = pd.to_numeric(df_raw["Ano"], errors="coerce")
-df_raw["Mês"] = pd.to_numeric(df_raw["Mês"], errors="coerce")
 
 # ─────────────────────────────────────────────
 #  HELPERS
@@ -41,27 +30,21 @@ df_raw["Mês"] = pd.to_numeric(df_raw["Mês"], errors="coerce")
 def formatar_brl(valor: float) -> str:
     if pd.isna(valor) or valor == 0:
         return "—"
-    valor_reais = valor / 100
-    return f"R$ {valor_reais:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"R$ {valor / 100:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 def badge(v: float) -> str:
-    seta  = "&#9650;" if v >= 0 else "&#9660;"
-    bg    = "#E8F7EC" if v >= 0 else "#FDEAEA"
-    cor   = "#1E7A3C" if v >= 0 else "#C0392B"
-    texto = formatar_brl(v)
+    seta = "&#9650;" if v >= 0 else "&#9660;"
+    bg   = "#E8F7EC" if v >= 0 else "#FDEAEA"
+    cor  = "#1E7A3C" if v >= 0 else "#C0392B"
     return (
-        '<span style="display:inline-block;font-size:0.7rem;font-weight:700;'
+        f'<span style="display:inline-block;font-size:0.7rem;font-weight:700;'
         f'padding:2px 8px;border-radius:20px;background:{bg};color:{cor};white-space:nowrap">'
-        f'{seta} {texto}</span>'
+        f'{seta} {formatar_brl(v)}</span>'
     )
 
 # ─────────────────────────────────────────────
-#  SIDEBAR — FILTROS
+#  SIDEBAR
 # ─────────────────────────────────────────────
-igrejas_disp = sorted(df_raw["Igrejas"].dropna().unique())
-anos_disp    = sorted(df_raw["Ano"].dropna().unique().astype(int))
-meses_disp   = sorted(df_raw["Mês"].dropna().unique().astype(int))
-
 with st.sidebar:
     st.markdown("""
     <div style='font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;
@@ -69,15 +52,15 @@ with st.sidebar:
                 border-bottom:1px solid rgba(255,255,255,0.3);'>Filtros</div>
     """, unsafe_allow_html=True)
 
-    filtro_igrejas = st.multiselect("Igrejas:", options=igrejas_disp, placeholder="Selecione...")
-    filtro_ano     = st.multiselect("Ano:",     options=anos_disp,    placeholder="Selecione...")
-    filtro_mes     = st.multiselect("Mês:",     options=meses_disp,   placeholder="Selecione...")
+    filtro_igrejas = st.multiselect("Igrejas:", options=sorted(df_raw["Igrejas"].dropna().unique()),         placeholder="Selecione...")
+    filtro_ano     = st.multiselect("Ano:",     options=sorted(df_raw["Ano"].dropna().unique().astype(int)), placeholder="Selecione...")
+    filtro_mes     = st.multiselect("Mês:",     options=sorted(df_raw["Mês"].dropna().unique().astype(int)), placeholder="Selecione...")
 
     botao_download_relatorio(df_raw)
 
     st.markdown("""
-    <hr style='border-color:rgba(255,255,255,0.2); margin:1.5rem 0 1rem;'>
-    <div style='text-align:center; padding: 1rem 0'>
+    <hr style='border-color:rgba(255,255,255,0.2);margin:1.5rem 0 1rem;'>
+    <div style='text-align:center;padding:1rem 0'>
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L12 5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M10.5 4H13.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
@@ -94,9 +77,8 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-
 # ─────────────────────────────────────────────
-#  APLICA FILTROS
+#  FILTROS
 # ─────────────────────────────────────────────
 df = df_raw.copy()
 if filtro_igrejas:
@@ -107,7 +89,7 @@ if filtro_mes:
     df = df[df["Mês"].isin(filtro_mes)]
 
 # ─────────────────────────────────────────────
-#  PAGE HEADER
+#  HEADER
 # ─────────────────────────────────────────────
 st.markdown(f"""
 <div class="page-header">
@@ -122,8 +104,6 @@ st.markdown(f"""
 #  RENDER MONTH BLOCK
 # ─────────────────────────────────────────────
 def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
-    # Cálculos ANTES de qualquer formatação
-    #df_mes = df_mes.sort_values("Receitas", ascending=False).copy()
     df_mes = df_mes.sort_values("Indice", ascending=True).copy()
     df_mes["Liquido"]     = df_mes["Receitas"] - df_mes["Despesas"]
     df_mes["Saldo Final"] = df_mes["Saldo Inicial"] + df_mes["Liquido"]
@@ -136,55 +116,67 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
     df_cx   = df_mes[df_mes["Caixa(Templo)"] > 0].sort_values("Caixa(Templo)", ascending=False)
     tot_cx  = df_cx["Caixa(Templo)"].iloc[0] if not df_cx.empty else 0.0
 
-    # Observações — monta como lista de strings e junta com join
-    obs_rows = df_mes[["Igrejas", "Observações"]].copy()
-    obs_rows = obs_rows[
-        obs_rows["Observações"].notna() &
-        (obs_rows["Observações"].astype(str).str.strip() != "") &
-        (obs_rows["Observações"].astype(str).str.strip() != "—")
-    ]
+    liq_cls  = "mpill-lp" if tot_liq >= 0 else "mpill-ln"
+    liq_seta = "&#9650;"  if tot_liq >= 0 else "&#9660;"
+
+    # Média do mês = acumulado líquido do ano até o mês atual ÷ número do mês
+    mes_ref  = int(df_mes["Mês"].iloc[0])   # ex: 4
+    ano_ref  = int(df_mes["Ano"].iloc[0])
+    # Filtra df com todos os meses de 1 até mes_ref do mesmo ano (respeitando filtros de igreja)
+    df_acum  = df[(df["Ano"] == ano_ref) & (df["Mês"] <= mes_ref)]
+    liq_acum = df_acum["Receitas"].sum() - df_acum["Despesas"].sum()
+    media_liq = liq_acum / mes_ref if mes_ref > 0 else 0.0
+
+    med_cls  = "mpill-lp" if media_liq >= 0 else "mpill-ln"
+
+    # Média por igreja = acumulado líquido da igreja até o mês atual ÷ número do mês
+    medias_ig = {}
+    for igr in df_mes["Igrejas"].unique():
+        df_ig_acum   = df_acum[df_acum["Igrejas"] == igr]
+        liq_ig_acum  = df_ig_acum["Receitas"].sum() - df_ig_acum["Despesas"].sum()
+        medias_ig[igr] = liq_ig_acum / mes_ref if mes_ref > 0 else 0.0
+
+    # Observações
+    obs_rows = df_mes[
+        df_mes["Observações"].notna() &
+        (df_mes["Observações"].astype(str).str.strip() != "") &
+        (df_mes["Observações"].astype(str).str.strip() != "—")
+    ][["Igrejas", "Observações"]]
 
     if not obs_rows.empty:
-        partes = []
-        for _, row in obs_rows.iterrows():
-            igreja = str(row["Igrejas"])
-            texto  = str(row["Observações"])
-            partes.append(
-                '<span style="color:#5A1F05;font-weight:700">' + igreja + ':</span> '
-                '<span style="color:#5A3D2B">' + texto + '</span>'
-            )
+        partes = [
+            '<span style="color:#5A1F05;font-weight:700">' + str(r["Igrejas"]) + ':</span> '
+            '<span style="color:#5A3D2B">' + str(r["Observações"]) + '</span>'
+            for _, r in obs_rows.iterrows()
+        ]
         obs_html = (
             '<div style="padding:6px 16px 8px;background:#FDF6F0;border-top:1px solid #E8D5C8;'
             'font-size:0.75rem;line-height:1.8">'
             '<span style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;'
             'color:#9E7E6A;margin-right:8px">Obs.:</span>'
-            + ' &nbsp;·&nbsp; '.join(partes) +
-            '</div>'
+            + ' &nbsp;·&nbsp; '.join(partes) + '</div>'
         )
     else:
         obs_html = ""
 
-    # Pills
-    liq_cls  = "mpill-lp" if tot_liq >= 0 else "mpill-ln"
-    liq_seta = "&#9650;" if tot_liq >= 0 else "&#9660;"
-
-    # Linhas da tabela
+    # Linhas
     linhas = []
     for _, row in df_mes.iterrows():
         cx = formatar_brl(row["Caixa(Templo)"]) if row["Caixa(Templo)"] > 0 else "—"
         linhas.append(
             '<tr>'
-            '<td class="ch">' + str(row["Igrejas"]) + '</td>'
+            '<td class="ch">' + str(row["Igrejas"])               + '</td>'
             '<td class="r">'  + formatar_brl(row["Receitas"])     + '</td>'
             '<td class="r">'  + formatar_brl(row["Despesas"])     + '</td>'
             '<td class="r">'  + badge(row["Liquido"])             + '</td>'
             '<td class="r">'  + formatar_brl(row["Saldo Inicial"])+ '</td>'
             '<td class="r">'  + formatar_brl(row["Saldo Final"])  + '</td>'
             '<td class="r">'  + cx                                + '</td>'
+            '<td class="r">'  + badge(medias_ig.get(str(row["Igrejas"]), 0.0)) + '</td>'
             '</tr>'
         )
-    rows_html = "".join(linhas)
-    cx_total  = formatar_brl(tot_cx) if tot_cx > 0 else "—"
+
+    cx_total = formatar_brl(tot_cx) if tot_cx > 0 else "—"
 
     return (
         '<div class="month-block">'
@@ -194,6 +186,7 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
               '<span class="mpill mpill-r">Rec: '  + formatar_brl(tot_rec) + '</span>'
               '<span class="mpill mpill-d">Desp: ' + formatar_brl(tot_des) + '</span>'
               '<span class="mpill ' + liq_cls + '">' + liq_seta + ' ' + formatar_brl(tot_liq) + '</span>'
+              '<span class="mpill ' + med_cls + '">Média Ano ' + formatar_brl(media_liq) + '</span>'
             '</div>'
           '</div>'
           '<div class="month-table-wrap">'
@@ -206,8 +199,9 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
                 '<th class="r">Saldo Inicial</th>'
                 '<th class="r">Saldo Final</th>'
                 '<th class="r">Caixa (Templo)</th>'
+                '<th class="r">Média/Ano</th>'
               '</tr></thead>'
-              '<tbody>' + rows_html + '</tbody>'
+              '<tbody>' + "".join(linhas) + '</tbody>'
               '<tfoot><tr>'
                 '<td><strong>Total</strong></td>'
                 '<td class="r">' + formatar_brl(tot_rec) + '</td>'
@@ -216,6 +210,7 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
                 '<td class="r">' + formatar_brl(tot_si)  + '</td>'
                 '<td class="r">' + formatar_brl(tot_sf)  + '</td>'
                 '<td class="r">' + cx_total              + '</td>'
+                '<td class="r">' + badge(media_liq)      + '</td>'
               '</tr></tfoot>'
             '</table>'
           '</div>'
@@ -224,7 +219,7 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
     )
 
 # ─────────────────────────────────────────────
-#  RENDERIZA OS 3 ÚLTIMOS MESES
+#  PERÍODOS E RENDERIZAÇÃO
 # ─────────────────────────────────────────────
 periodos = (
     df[["Ano", "Mês", "Data Referência"]]
@@ -241,13 +236,3 @@ else:
     for ano, mes, label in periodos:
         df_mes = df[(df["Ano"] == ano) & (df["Mês"] == mes)]
         st.markdown(render_month_block(str(label), df_mes), unsafe_allow_html=True)
-
-# ─────────────────────────────────────────────
-#  FOOTER
-# ─────────────────────────────────────────────
-#st.markdown(f"""
-#<div class="rel-footer">
-#    <span>&#9642; IBF — Relatório Financeiro Mensal</span>
-#    <span>Gerado em {datetime.now().strftime('%d/%m/%Y às %H:%M')}</span>
-#</div>
-#""", unsafe_allow_html=True)
