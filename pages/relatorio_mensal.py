@@ -95,7 +95,7 @@ st.markdown(f"""
 <div class="page-header">
     <div class="dash-header">
         <h1>Relatório Financeiro IBF</h1>
-        <p>Três últimos meses · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+        <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -133,7 +133,7 @@ SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><lin
 SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
 
 st.markdown(f"""
-<div class="section-title">Resumo Financeiro</div>
+<div class="section-title">Cards Financeiro dos Ultimos {mes_ref_kpi} Meses</div>
 <div class="kpi-grid">
     <div class="kpi-card receitas">
         <div class="kpi-inner">
@@ -186,6 +186,8 @@ st.markdown(f"""
         </div>
     </div>
 </div>
+<div style="margin-top:1.5rem;margin-bottom:0.5rem;font-size:0.75rem;color:#A67C52">
+<div class="section-title">Tabelas Geradas dos Últimos 3 Meses</div>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -257,10 +259,10 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
             '<td class="r">'  + formatar_brl(row["Receitas"])     + '</td>'
             '<td class="r">'  + formatar_brl(row["Despesas"])     + '</td>'
             '<td class="r">'  + badge(row["Liquido"])             + '</td>'
+            '<td class="r">'  + badge(medias_ig.get(str(row["Igrejas"]), 0.0)) + '</td>'
             '<td class="r">'  + formatar_brl(row["Saldo Inicial"])+ '</td>'
             '<td class="r">'  + formatar_brl(row["Saldo Final"])  + '</td>'
             '<td class="r">'  + cx                                + '</td>'
-            '<td class="r">'  + badge(medias_ig.get(str(row["Igrejas"]), 0.0)) + '</td>'
             '</tr>'
         )
 
@@ -284,10 +286,10 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
                 '<th class="r">Receitas</th>'
                 '<th class="r">Despesas</th>'
                 '<th class="r">Líquido</th>'
+                '<th class="r">Média/Ano</th>'
                 '<th class="r">Saldo Inicial</th>'
                 '<th class="r">Saldo Final</th>'
                 '<th class="r">Caixa (Templo)</th>'
-                '<th class="r">Média/Ano</th>'
               '</tr></thead>'
               '<tbody>' + "".join(linhas) + '</tbody>'
               '<tfoot><tr>'
@@ -295,10 +297,10 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
                 '<td class="r">' + formatar_brl(tot_rec) + '</td>'
                 '<td class="r">' + formatar_brl(tot_des) + '</td>'
                 '<td class="r">' + badge(tot_liq)        + '</td>'
+                '<td class="r">' + badge(media_liq)      + '</td>'
                 '<td class="r">' + formatar_brl(tot_si)  + '</td>'
                 '<td class="r">' + formatar_brl(tot_sf)  + '</td>'
                 '<td class="r">' + cx_total              + '</td>'
-                '<td class="r">' + badge(media_liq)      + '</td>'
               '</tr></tfoot>'
             '</table>'
           '</div>'
@@ -323,4 +325,7 @@ if not periodos:
 else:
     for ano, mes, label in periodos:
         df_mes = df[(df["Ano"] == ano) & (df["Mês"] == mes)]
-        st.markdown(render_month_block(str(label), df_mes), unsafe_allow_html=True)
+        st.markdown(
+            render_month_block(str(label), df_mes), 
+            unsafe_allow_html=True
+        )
