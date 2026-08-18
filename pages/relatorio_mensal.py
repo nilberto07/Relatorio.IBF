@@ -101,6 +101,94 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
+#  KPI CARDS — totais gerais do período filtrado
+# ─────────────────────────────────────────────
+total_rec  = df["Receitas"].sum()
+total_desp = df["Despesas"].sum()
+liquido    = total_rec - total_desp
+badge_class = "badge-pos" if liquido >= 0 else "badge-neg"
+badge_sign  = "▲" if liquido >= 0 else "▼"
+
+df_caixa  = df[df["Caixa(Templo)"] > 0].sort_values(["Ano", "Mês"], ascending=False)
+caixa_tmp = df_caixa["Caixa(Templo)"].iloc[0] if not df_caixa.empty else 0.0
+
+# Média mensal — acumulado do ano até o mês mais recente ÷ número do mês
+if not df.empty and df["Mês"].notna().any():
+    ano_ref_kpi = int(df["Ano"].max())
+    mes_ref_kpi = int(df[df["Ano"] == ano_ref_kpi]["Mês"].max())
+    df_acum_kpi = df[(df["Ano"] == ano_ref_kpi) & (df["Mês"] <= mes_ref_kpi)]
+    liq_acum_kpi = df_acum_kpi["Receitas"].sum() - df_acum_kpi["Despesas"].sum()
+    media_kpi    = liq_acum_kpi / mes_ref_kpi if mes_ref_kpi > 0 else 0.0
+else:
+    mes_ref_kpi = 0
+    media_kpi   = 0.0
+
+med_sign  = "▲" if media_kpi >= 0 else "▼"
+med_class = "badge-pos" if media_kpi >= 0 else "badge-neg"
+
+SVG_RECEITAS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+SVG_DESPESAS = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#7D0911" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 8 12 3 7 8" stroke="#7D0911" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="3" x2="12" y2="15" stroke="#7D0911" stroke-width="1.8" stroke-linecap="round"/></svg>'
+SVG_SALDO    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#5A1F05" stroke-width="1.8"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2Z" stroke="#5A1F05" stroke-width="1.8"/><circle cx="12" cy="14" r="2" stroke="#5A1F05" stroke-width="1.8"/></svg>'
+SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="20" x2="18" y2="10" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke="#7D0911" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/></svg>'
+SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+
+st.markdown(f"""
+<div class="section-title">Resumo Financeiro</div>
+<div class="kpi-grid">
+    <div class="kpi-card receitas">
+        <div class="kpi-inner">
+            <div class="kpi-icon receitas">{SVG_RECEITAS}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Receitas</div>
+                <div class="kpi-value">{formatar_brl(total_rec)}</div>
+                <div class="kpi-sub">Entradas no período</div>
+            </div>
+        </div>
+    </div>
+    <div class="kpi-card despesas">
+        <div class="kpi-inner">
+            <div class="kpi-icon despesas">{SVG_DESPESAS}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Despesas</div>
+                <div class="kpi-value">{formatar_brl(total_desp)}</div>
+                <span class="kpi-badge {badge_class}">{badge_sign} Líquido: {formatar_brl(liquido)}</span>
+            </div>
+        </div>
+    </div>
+    <!--<div class="kpi-card saldo">
+        <div class="kpi-inner">
+            <div class="kpi-icon saldo">{SVG_SALDO}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Saldo Líquido</div>
+                <div class="kpi-value">{badge_sign} {formatar_brl(liquido)}</div>
+                <div class="kpi-sub">Receitas x Despesas</div>
+            </div>
+        </div>
+    </div>-->
+    <div class="kpi-card receitas">
+        <div class="kpi-inner">
+            <div class="kpi-icon receitas">{SVG_MEDIA}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Média Mensal</div>
+                <div class="kpi-value">{med_sign} {formatar_brl(media_kpi)}</div>
+                <div class="kpi-sub">Líquido acum. ÷ mês {mes_ref_kpi if mes_ref_kpi else "—"}</div>
+            </div>
+        </div>
+    </div>
+    <div class="kpi-card caixa">
+        <div class="kpi-inner">
+            <div class="kpi-icon caixa">{SVG_CAIXA}</div>
+            <div class="kpi-body">
+                <div class="kpi-label">Caixa (Templo)</div>
+                <div class="kpi-value">{formatar_brl(caixa_tmp)}</div>
+                <div class="kpi-sub">Reserva para obras</div>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
 #  RENDER MONTH BLOCK
 # ─────────────────────────────────────────────
 def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
@@ -186,7 +274,7 @@ def render_month_block(label: str, df_mes: pd.DataFrame) -> str:
               '<span class="mpill mpill-r">Rec: '  + formatar_brl(tot_rec) + '</span>'
               '<span class="mpill mpill-d">Desp: ' + formatar_brl(tot_des) + '</span>'
               '<span class="mpill ' + liq_cls + '">' + liq_seta + ' ' + formatar_brl(tot_liq) + '</span>'
-              '<span class="mpill ' + med_cls + '">Média Ano ' + formatar_brl(media_liq) + '</span>'
+              '<span class="mpill ' + med_cls + '">Média/Ano: ' + formatar_brl(media_liq) + '</span>'
             '</div>'
           '</div>'
           '<div class="month-table-wrap">'
