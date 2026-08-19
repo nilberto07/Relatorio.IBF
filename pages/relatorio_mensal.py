@@ -96,7 +96,7 @@ st.markdown(f"""
 <div class="page-header">
     <div class="dash-header">
         <h1>Relatório Financeiro IBF</h1>
-        <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+        <p>Relatório · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
     </div>
 </div>
 """, unsafe_allow_html=True)

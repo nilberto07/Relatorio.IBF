@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
@@ -130,7 +131,7 @@ SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><lin
 st.markdown(f"""
 <div class="dash-header">
     <h1>Dashboard Financeiro</h1>
-    <p>Relatório · Assembleia Geral</p>
+    <p>Relatório · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
 </div>
 <div class="section-title">Resumo Financeiro</div>
 <div class="kpi-grid">
