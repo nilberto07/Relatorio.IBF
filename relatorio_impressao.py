@@ -244,15 +244,22 @@ def build_panfleto(periodos: list, df: pd.DataFrame) -> str:
         liq_cls  = "pf-pill-lp" if tot_liq >= 0 else "pf-pill-ln"
         liq_seta = "&#9650;" if tot_liq >= 0 else "&#9660;"
 
+        # Média por mês = acumulado da igreja até mes atual ÷ número do mês
+        df_acum_pf = df[(df["Ano"] == ano) & (df["Mês"] <= mes)]
+
         linhas = []
         for _, row in df_mes.iterrows():
             cx = formatar_brl(row["Caixa(Templo)"]) if row["Caixa(Templo)"] > 0 else "—"
+            df_ig_acum  = df_acum_pf[df_acum_pf["Igrejas"] == row["Igrejas"]]
+            liq_ig_acum = df_ig_acum["Receitas"].sum() - df_ig_acum["Despesas"].sum()
+            media_ig    = liq_ig_acum / mes if mes > 0 else 0.0
             linhas.append(
                 '<tr>'
                 '<td class="ch">' + str(row["Igrejas"])               + '</td>'
                 '<td class="r">'  + formatar_brl(row["Receitas"])     + '</td>'
                 '<td class="r">'  + formatar_brl(row["Despesas"])     + '</td>'
                 '<td class="r">'  + badge(row["Liquido"])             + '</td>'
+                '<td class="r">'  + badge(media_ig)                   + '</td>'
                 '<td class="r">'  + formatar_brl(row["Saldo Inicial"])+ '</td>'
                 '<td class="r">'  + formatar_brl(row["Saldo Final"])  + '</td>'
                 '<td class="r">'  + cx                                + '</td>'
@@ -296,19 +303,21 @@ def build_panfleto(periodos: list, df: pd.DataFrame) -> str:
                   '<th class="r">Receitas</th>'
                   '<th class="r">Despesas</th>'
                   '<th class="r">Líquido</th>'
+                  '<th class="r">Média/Ano</th>'
                   '<th class="r">Saldo Inicial</th>'
                   '<th class="r">Saldo Final</th>'
-                  '<th class="r">Caixa(Templo)</th>'
+                  '<th class="r">Cai. Templo</th>'
                 '</tr></thead>'
                 '<tbody>' + "".join(linhas) + '</tbody>'
                 '<tfoot><tr>'
                   '<td><strong>Total</strong></td>'
-                  '<td class="r">' + formatar_brl(tot_rec) + '</td>'
-                  '<td class="r">' + formatar_brl(tot_des) + '</td>'
-                  '<td class="r">' + badge(tot_liq)        + '</td>'
-                  '<td class="r">' + formatar_brl(tot_si)  + '</td>'
-                  '<td class="r">' + formatar_brl(tot_sf)  + '</td>'
-                  '<td class="r">' + cx_total              + '</td>'
+                  '<td class="r">' + formatar_brl(tot_rec)                                                           + '</td>'
+                  '<td class="r">' + formatar_brl(tot_des)                                                           + '</td>'
+                  '<td class="r">' + badge(tot_liq)                                                                  + '</td>'
+                  '<td class="r">' + badge((df_acum_pf["Receitas"].sum() - df_acum_pf["Despesas"].sum()) / mes if mes > 0 else 0.0) + '</td>'
+                  '<td class="r">' + formatar_brl(tot_si)                                                            + '</td>'
+                  '<td class="r">' + formatar_brl(tot_sf)                                                            + '</td>'
+                  '<td class="r">' + cx_total                                                                        + '</td>'
                 '</tr></tfoot>'
               '</table>'
               + obs_html +
@@ -338,6 +347,15 @@ def build_panfleto(periodos: list, df: pd.DataFrame) -> str:
 #  FUNÇÃO PÚBLICA — botão na sidebar
 # ─────────────────────────────────────────────
 def botao_download_relatorio(df_raw: pd.DataFrame) -> None:
+    """
+    Cole dentro do bloco `with st.sidebar:` de qualquer página.
+
+    Exemplo:
+        from relatorio_impressao import botao_download_relatorio
+        with st.sidebar:
+            ...filtros...
+            botao_download_relatorio(df_raw)
+    """
     import streamlit as st
 
     periodos = (

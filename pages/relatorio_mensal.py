@@ -59,21 +59,22 @@ with st.sidebar:
     botao_download_relatorio(df_raw)
 
     st.markdown("""
-    <hr style='border-color:rgba(255,255,255,0.2);margin:1.5rem 0 1rem;'>
-    <div style='text-align:center;padding:1rem 0'>
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L12 5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M10.5 4H13.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M5 10L12 5L19 10V21H5V10Z" stroke="white" stroke-width="1.7"
-                  stroke-linejoin="round" fill="rgba(255,255,255,0.1)"/>
-            <path d="M9 21V15C9 13.3431 10.3431 12 12 12C13.6569 12 15 13.3431 15 15V21"
-                  stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
-            <rect x="10.5" y="8" width="3" height="3" rx="0.5"
-                  stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
-        </svg>
-        <div style='font-family:"Playfair Display",serif;font-size:1rem;font-weight:700;margin-top:6px;'>IBF</div>
-        <div style='font-size:0.68rem;opacity:0.6;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;'>
-            Sistema Financeiro</div>
+    <hr style='border-color:rgba(255,255,255,255);margin-bottom:1.5rem;'>
+    <div style='text-align:center;padding:2rem 0 1.5rem;'>
+        <div style='margin-bottom:0.5rem;display:flex;justify-content:center;'>
+            <!--<svg width="44" height="44" viewBox="0 0 24 24" fill="none" style="opacity:0.95">
+                <path d="M12 2L12 5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M10.5 4H13.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M5 10L12 5L19 10V21H5V10Z" stroke="white" stroke-width="1.7"
+                      stroke-linejoin="round" fill="rgba(255,255,255,0.1)"/>
+                <path d="M9 21V15C9 13.3431 10.3431 12 12 12C13.6569 12 15 13.3431 15 15V21"
+                      stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
+                <rect x="10.5" y="8" width="3" height="3" rx="0.5"
+                      stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
+            </svg>-->
+        </div>
+        <div style='font-family:"Playfair Display",serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;'>IBF</div>
+        <div style='font-size:0.7rem;opacity:0.6;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;'>Sistema Financeiro</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -133,7 +134,7 @@ SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><lin
 SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
 
 st.markdown(f"""
-<div class="section-title">Cards Financeiro dos Ultimos {mes_ref_kpi} Meses</div>
+<div class="section-title">Cards Financeiro dos Últimos {mes_ref_kpi} Meses</div>
 <div class="kpi-grid">
     <div class="kpi-card receitas">
         <div class="kpi-inner">
