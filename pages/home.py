@@ -67,18 +67,6 @@ with st.sidebar:
     st.markdown("""
     <hr style='border-color:rgba(255,255,255,255);margin-bottom:1.5rem;'>
     <div style='text-align:center;padding:2rem 0 1.5rem;'>
-        <div style='margin-bottom:0.5rem;display:flex;justify-content:center;'>
-            <!--<svg width="44" height="44" viewBox="0 0 24 24" fill="none" style="opacity:0.95">
-                <path d="M12 2L12 5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M10.5 4H13.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M5 10L12 5L19 10V21H5V10Z" stroke="white" stroke-width="1.7"
-                      stroke-linejoin="round" fill="rgba(255,255,255,0.1)"/>
-                <path d="M9 21V15C9 13.3431 10.3431 12 12 12C13.6569 12 15 13.3431 15 15V21"
-                      stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
-                <rect x="10.5" y="8" width="3" height="3" rx="0.5"
-                      stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
-            </svg>-->
-        </div>
         <div style='font-family:"Playfair Display",serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;'>IBF</div>
         <div style='font-size:0.7rem;opacity:0.6;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;'>Sistema Financeiro</div>
     </div>
@@ -129,9 +117,11 @@ SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><lin
 #  KPI CARDS
 # ─────────────────────────────────────────────
 st.markdown(f"""
-<div class="dash-header">
-    <h1>Dashboard Financeiro</h1>
-    <p>Relatório · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+<div class="page-header">
+    <div class="dash-header">
+        <h1>Dashboard Financeiro</h1>
+        <p>Relatório · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+    </div>
 </div>
 <div class="section-title">Resumo Financeiro</div>
 <div class="kpi-grid">

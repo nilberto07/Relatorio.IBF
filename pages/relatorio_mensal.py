@@ -52,27 +52,55 @@ with st.sidebar:
                 border-bottom:1px solid rgba(255,255,255,0.3);'>Filtros</div>
     """, unsafe_allow_html=True)
 
-    filtro_igrejas = st.multiselect("Igrejas:", options=sorted(df_raw["Igrejas"].dropna().unique()),         placeholder="Selecione...")
-    filtro_ano     = st.multiselect("Ano:",     options=sorted(df_raw["Ano"].dropna().unique().astype(int)), placeholder="Selecione...")
-    filtro_mes     = st.multiselect("Mês:",     options=sorted(df_raw["Mês"].dropna().unique().astype(int)), placeholder="Selecione...")
+    filtro_igrejas = st.multiselect("Igrejas:", options=sorted(df_raw["Igrejas"].dropna().unique()), placeholder="Selecione...")
+
+    # Períodos disponíveis ordenados
+    MESES_NOME = {1:"Jan",2:"Fev",3:"Mar",4:"Abr",5:"Mai",6:"Jun",
+                  7:"Jul",8:"Ago",9:"Set",10:"Out",11:"Nov",12:"Dez"}
+
+    periodos_disp = (
+        df_raw[["Ano","Mês"]]
+        .drop_duplicates()
+        .dropna()
+        .sort_values(["Ano","Mês"])
+        .apply(lambda r: (int(r["Ano"]), int(r["Mês"])), axis=1)
+        .tolist()
+    )
+    opcoes_label = [f"{MESES_NOME.get(m,'?')}/{a}" for a, m in periodos_disp]
+    opcoes_map   = dict(zip(opcoes_label, periodos_disp))
+
+    # Padrão: todos os períodos do ano atual
+    ano_atual   = datetime.now().year
+    idxs_ano    = [i for i, (a, m) in enumerate(periodos_disp) if a == ano_atual]
+    idx_ini_def = idxs_ano[0]  if idxs_ano else 0
+    idx_fim_def = idxs_ano[-1] if idxs_ano else len(opcoes_label) - 1
+
+    st.markdown(
+        "<div style='font-size:0.68rem;font-weight:700;text-transform:uppercase;"
+        "letter-spacing:.09em;color:rgba(255,255,255,0.7);margin:10px 0 4px'>"
+        "Período</div>",
+        unsafe_allow_html=True
+    )
+    col_ini, col_fim = st.columns(2)
+    with col_ini:
+        sel_ini = st.selectbox("Início", options=opcoes_label,
+                               index=idx_ini_def, label_visibility="collapsed")
+        st.markdown("<div style='font-size:0.8rem; text-align:center; margin-top:-8px'>Início</div>",
+                    unsafe_allow_html=True)
+    with col_fim:
+        sel_fim = st.selectbox("Fim", options=opcoes_label,
+                               index=idx_fim_def, label_visibility="collapsed")
+        st.markdown("<div style='font-size:0.8rem;text-align:center;margin-top:-8px'>Fim</div>",
+                    unsafe_allow_html=True)
+
+    periodo_ini = opcoes_map[sel_ini]   # (ano, mes)
+    periodo_fim = opcoes_map[sel_fim]   # (ano, mes)
 
     botao_download_relatorio(df_raw)
 
     st.markdown("""
     <hr style='border-color:rgba(255,255,255,255);margin-bottom:1.5rem;'>
     <div style='text-align:center;padding:2rem 0 1.5rem;'>
-        <div style='margin-bottom:0.5rem;display:flex;justify-content:center;'>
-            <!--<svg width="44" height="44" viewBox="0 0 24 24" fill="none" style="opacity:0.95">
-                <path d="M12 2L12 5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M10.5 4H13.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M5 10L12 5L19 10V21H5V10Z" stroke="white" stroke-width="1.7"
-                      stroke-linejoin="round" fill="rgba(255,255,255,0.1)"/>
-                <path d="M9 21V15C9 13.3431 10.3431 12 12 12C13.6569 12 15 13.3431 15 15V21"
-                      stroke="white" stroke-width="1.7" stroke-linejoin="round"/>
-                <rect x="10.5" y="8" width="3" height="3" rx="0.5"
-                      stroke="white" stroke-width="1.4" fill="rgba(255,255,255,0.15)"/>
-            </svg>-->
-        </div>
         <div style='font-family:"Playfair Display",serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;'>IBF</div>
         <div style='font-size:0.7rem;opacity:0.6;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;'>Sistema Financeiro</div>
     </div>
@@ -84,10 +112,15 @@ with st.sidebar:
 df = df_raw.copy()
 if filtro_igrejas:
     df = df[df["Igrejas"].isin(filtro_igrejas)]
-if filtro_ano:
-    df = df[df["Ano"].isin(filtro_ano)]
-if filtro_mes:
-    df = df[df["Mês"].isin(filtro_mes)]
+
+# Garante que periodo_ini <= periodo_fim antes de filtrar
+if periodo_ini > periodo_fim:
+    periodo_ini, periodo_fim = periodo_fim, periodo_ini
+
+# Filtra pelos períodos entre ini e fim (inclusive)
+df = df[
+    df.apply(lambda r: periodo_ini <= (int(r["Ano"]), int(r["Mês"])) <= periodo_fim, axis=1)
+]
 
 # ─────────────────────────────────────────────
 #  HEADER
@@ -96,7 +129,7 @@ st.markdown(f"""
 <div class="page-header">
     <div class="dash-header">
         <h1>Relatório Financeiro IBF</h1>
-        <p>Relatório · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+        <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -134,7 +167,7 @@ SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><lin
 SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
 
 st.markdown(f"""
-<div class="section-title">Cards Financeiro dos Últimos {mes_ref_kpi} Meses</div>
+<div class="section-title">Cards Financeiro dos Últimos {mes_ref_kpi} meses</div>
 <div class="kpi-grid">
     <div class="kpi-card receitas">
         <div class="kpi-inner">
@@ -170,7 +203,7 @@ st.markdown(f"""
         <div class="kpi-inner">
             <div class="kpi-icon receitas">{SVG_MEDIA}</div>
             <div class="kpi-body">
-                <div class="kpi-label">Média Mensal</div>
+                <div class="kpi-label">Média Mensal ({ano_ref_kpi})</div>
                 <div class="kpi-value">{med_sign} {formatar_brl(media_kpi)}</div>
                 <div class="kpi-sub">Líquido acum. ÷ mês {mes_ref_kpi if mes_ref_kpi else "—"}</div>
             </div>
@@ -187,8 +220,7 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-<div style="margin-top:1.5rem;margin-bottom:0.5rem;font-size:0.75rem;color:#A67C52">
-<div class="section-title">Tabelas Geradas dos Últimos 3 Meses</div>
+<div class="section-title">Tabelas dos Últimmos 3 meses</div>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -326,7 +358,4 @@ if not periodos:
 else:
     for ano, mes, label in periodos:
         df_mes = df[(df["Ano"] == ano) & (df["Mês"] == mes)]
-        st.markdown(
-            render_month_block(str(label), df_mes), 
-            unsafe_allow_html=True
-        )
+        st.markdown(render_month_block(str(label), df_mes), unsafe_allow_html=True)
