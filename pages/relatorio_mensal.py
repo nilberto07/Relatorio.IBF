@@ -122,17 +122,6 @@ df = df[
     df.apply(lambda r: periodo_ini <= (int(r["Ano"]), int(r["Mês"])) <= periodo_fim, axis=1)
 ]
 
-# ─────────────────────────────────────────────
-#  HEADER
-# ─────────────────────────────────────────────
-st.markdown(f"""
-<div class="page-header">
-    <div class="dash-header">
-        <h1>Relatório Financeiro IBF</h1>
-        <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  KPI CARDS — totais gerais do período filtrado
@@ -166,8 +155,20 @@ SVG_SALDO    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rec
 SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="20" x2="18" y2="10" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke="#7D0911" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/></svg>'
 SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#BF5223" stroke-width="1.8" stroke-linejoin="round"/></svg>'
 
+# ─────────────────────────────────────────────
+#  HEADER
+# ─────────────────────────────────────────────
 st.markdown(f"""
-<div class="section-title">Cards Financeiro dos Últimos {mes_ref_kpi} meses</div>
+<div class="page-header">
+    <div class="dash-header">
+        <h1>Relatório Financeiro IBF</h1>
+        <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+    </div>
+    <div class="section-title">Cards Financeiro dos Últimos {mes_ref_kpi} meses</div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
 <div class="kpi-grid">
     <div class="kpi-card receitas">
         <div class="kpi-inner">

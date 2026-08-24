@@ -1,5 +1,5 @@
-from datetime import datetime
 import pandas as pd
+from datetime import datetime
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import ssl
@@ -54,15 +54,57 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     filtro_igrejas = st.multiselect("Igrejas:", options=igrejas_disp, placeholder="Todas as igrejas")
-    filtro_ano     = st.multiselect("Ano:",     options=anos_disp,    placeholder="Todos os anos")
-    filtro_mes     = st.multiselect("Mês:",     options=meses_disp,   placeholder="Todos os meses")
+
+    # Períodos disponíveis ordenados
+    MESES_NOME = {1:"Jan",2:"Fev",3:"Mar",4:"Abr",5:"Mai",6:"Jun",
+                  7:"Jul",8:"Ago",9:"Set",10:"Out",11:"Nov",12:"Dez"}
+
+    periodos_disp = (
+        df[["Ano","Mês"]]
+        .drop_duplicates()
+        .dropna()
+        .sort_values(["Ano","Mês"])
+        .apply(lambda r: (int(r["Ano"]), int(r["Mês"])), axis=1)
+        .tolist()
+    )
+    opcoes_label = [f"{MESES_NOME.get(m,'?')}/{a}" for a, m in periodos_disp]
+    opcoes_map   = dict(zip(opcoes_label, periodos_disp))
+
+    # Padrão: todos os períodos do ano atual
+    ano_atual   = datetime.now().year
+    idxs_ano    = [i for i, (a, m) in enumerate(periodos_disp) if a == ano_atual]
+    idx_ini_def = idxs_ano[0]  if idxs_ano else 0
+    idx_fim_def = idxs_ano[-1] if idxs_ano else len(opcoes_label) - 1
+
+    st.markdown(
+        "<div style='font-size:0.68rem;font-weight:700;text-transform:uppercase;"
+        "letter-spacing:.09em;color:rgba(255,255,255,0.7);margin:10px 0 4px'>"
+        "Período</div>",
+        unsafe_allow_html=True
+    )
+    col_ini, col_fim = st.columns(2)
+    with col_ini:
+        sel_ini = st.selectbox("Início", options=opcoes_label,
+                               index=idx_ini_def, label_visibility="collapsed")
+        st.markdown("<div style='font-size:0.8rem; text-align:center; margin-top:-8px'>Início</div>",
+                    unsafe_allow_html=True)
+    with col_fim:
+        sel_fim = st.selectbox("Fim", options=opcoes_label,
+                               index=idx_fim_def, label_visibility="collapsed")
+        st.markdown("<div style='font-size:0.8rem;text-align:center;margin-top:-8px'>Fim</div>",
+                    unsafe_allow_html=True)
+
+    periodo_ini = opcoes_map[sel_ini]   # (ano, mes)
+    periodo_fim = opcoes_map[sel_fim]   # (ano, mes)
+
+    if periodo_ini > periodo_fim:
+        periodo_ini, periodo_fim = periodo_fim, periodo_ini
 
     if filtro_igrejas:
         df = df[df["Igrejas"].isin(filtro_igrejas)]
-    if filtro_ano:
-        df = df[df["Ano"].isin(filtro_ano)]
-    if filtro_mes:
-        df = df[df["Mês"].isin(filtro_mes)]
+    df = df[
+        df.apply(lambda r: periodo_ini <= (int(r["Ano"]), int(r["Mês"])) <= periodo_fim, axis=1)
+    ]
 
     st.markdown("""
     <hr style='border-color:rgba(255,255,255,255);margin-bottom:1.5rem;'>
@@ -114,15 +156,22 @@ SVG_CAIXA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><pat
 SVG_MEDIA    = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="20" x2="18" y2="10" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="#BF5223" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke="#7D0911" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/></svg>'
 
 # ─────────────────────────────────────────────
-#  KPI CARDS
+#  HEADER
 # ─────────────────────────────────────────────
 st.markdown(f"""
 <div class="page-header">
     <div class="dash-header">
-        <h1>Dashboard Financeiro</h1>
-        <p>Relatório · Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
+        <h1>Relatório Financeiro IBF</h1>
+        <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
     </div>
+    <div class="section-title">Cards Financeiro dos Últimos {ano_ref} meses</div>
 </div>
+""", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+#  KPI CARDS
+# ─────────────────────────────────────────────
+st.markdown(f"""
 <div class="section-title">Resumo Financeiro</div>
 <div class="kpi-grid">
     <div class="kpi-card receitas">
@@ -145,21 +194,11 @@ st.markdown(f"""
             </div>
         </div>
     </div>
-    <!--<div class="kpi-card saldo">
-        <div class="kpi-inner">
-            <div class="kpi-icon saldo">{SVG_SALDO}</div>
-            <div class="kpi-body">
-                <div class="kpi-label">Saldo Líquido</div>
-                <div class="kpi-value">{badge_sign} {formatar_brl(liquido)}</div>
-                <div class="kpi-sub">Receita x Despesas</div>
-            </div>
-        </div>
-    </div>-->
     <div class="kpi-card receitas">
         <div class="kpi-inner">
             <div class="kpi-icon receitas">{SVG_MEDIA}</div>
             <div class="kpi-body">
-                <div class="kpi-label">Média Mensal</div>
+                <div class="kpi-label">Média Mensal ({ano_ref})</div>
                 <div class="kpi-value">{med_sign} {formatar_brl(media_liq)}</div>
                 <div class="kpi-sub">Líquido acum. ÷ mês {mes_ref if not df.empty else "—"}</div>
             </div>

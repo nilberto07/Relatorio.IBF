@@ -347,15 +347,7 @@ def build_panfleto(periodos: list, df: pd.DataFrame) -> str:
 #  FUNÇÃO PÚBLICA — botão na sidebar
 # ─────────────────────────────────────────────
 def botao_download_relatorio(df_raw: pd.DataFrame) -> None:
-    """
-    Cole dentro do bloco `with st.sidebar:` de qualquer página.
 
-    Exemplo:
-        from relatorio_impressao import botao_download_relatorio
-        with st.sidebar:
-            ...filtros...
-            botao_download_relatorio(df_raw)
-    """
     import streamlit as st
 
     periodos = (
@@ -377,7 +369,7 @@ def botao_download_relatorio(df_raw: pd.DataFrame) -> None:
         """<hr style='border-color:rgba(255,255,255,0.15);margin:1.2rem 0 0.9rem'>
 <div style='font-size:0.60rem;font-weight:700;text-transform:uppercase;
             letter-spacing:.12em;color:rgba(255,255,255,0.5);margin-bottom:8px;'>
-    Relatório Impresso
+    Relatório Impresso do Últimos 3 Meses
 </div>""",
         unsafe_allow_html=True,
     )
