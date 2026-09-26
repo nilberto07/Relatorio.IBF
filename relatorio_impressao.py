@@ -369,7 +369,7 @@ def botao_download_relatorio(df_raw: pd.DataFrame) -> None:
         """<hr style='border-color:rgba(255,255,255,0.15);margin:1.2rem 0 0.9rem'>
 <div style='font-size:0.60rem;font-weight:700;text-transform:uppercase;
             letter-spacing:.12em;color:rgba(255,255,255,0.5);margin-bottom:8px;'>
-    Relatório Impresso do Últimos 3 Meses
+    Relatório Impresso dos Últimos 3 Meses
 </div>""",
         unsafe_allow_html=True,
     )

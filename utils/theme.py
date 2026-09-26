@@ -17,6 +17,17 @@ RED       = "#C0392B"
 RED_BG    = "#FDEAEA"
 
 def load_css():
+# COMFIGURAÇÃO PARA IMPEDIR TRADUÇÃO AUTOMÁTICA PELO GOOGLE
+    st.markdown("""
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="pt-BR">
+    <script>
+        document.documentElement.lang = 'pt-BR';
+        document.documentElement.setAttribute('translate', 'no');
+        document.documentElement.classList.add('notranslate');
+    </script>
+    """, unsafe_allow_html=True)
+# CSS GLOBAL 
     st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap');
@@ -352,11 +363,4 @@ def load_css():
         table.rel thead th, table.rel tbody td, table.rel tfoot td {{ padding: 5px 9px; }}
     }}
     </style>
-
-    <script>
-        document.documentElement.lang = 'pt-BR';
-        document.documentElement.setAttribute('translate', 'no');
-    </script>
-    <meta name="google" content="notranslate">
-    
     """, unsafe_allow_html=True)
