@@ -8,6 +8,8 @@ from utils.theme import load_css
 load_css()
 ssl._create_default_https_context = ssl._create_stdlib_context
 
+st.toast("Por favor não traduzir", icon="✅")
+
 ABAS = {
     "Página1": "0",
     "Página2": "1128666635",
