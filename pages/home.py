@@ -12,7 +12,7 @@ if "aviso_traducao_exibido" not in st.session_state:
     st.toast(
         "Por favor não traduzir a Página",
         icon="⚠️",
-        duration="long"
+        duration=3
     )
     st.session_state.aviso_traducao_exibido = True
 
