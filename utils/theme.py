@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 # ─────────────────────────────────────────────
@@ -18,15 +19,22 @@ RED_BG    = "#FDEAEA"
 
 def load_css():
 # COMFIGURAÇÃO PARA IMPEDIR TRADUÇÃO AUTOMÁTICA PELO GOOGLE
-    st.markdown("""
-    <meta name="google" content="notranslate">
-    <meta http-equiv="Content-Language" content="pt-BR">
-    <script>
-        document.documentElement.lang = 'pt-BR';
-        document.documentElement.setAttribute('translate', 'no');
-        document.documentElement.classList.add('notranslate');
-    </script>
-    """, unsafe_allow_html=True)
+    components.html("""
+        <script>
+            // Sobe até o documento pai e define lang
+            try {
+                window.parent.document.documentElement.lang = 'pt-BR';
+                window.parent.document.documentElement.setAttribute('translate', 'no');
+                window.parent.document.documentElement.classList.add('notranslate');
+                
+                var meta = window.parent.document.createElement('meta');
+                meta.name = 'google';
+                meta.content = 'notranslate';
+                window.parent.document.head.appendChild(meta);
+            } catch(e) {}
+        </script>
+    """, height=0)
+    
 # CSS GLOBAL 
     st.markdown(f"""
     <style>

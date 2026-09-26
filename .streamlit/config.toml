@@ -28,6 +28,8 @@ hideTopBar = false
 
 [server]
 enableStaticServing = true
+headless = true
+enableCORS = false
 
 [browser]
 # Não tem opção nativa de lang, mas isso ajuda a nao traduzir para pt
