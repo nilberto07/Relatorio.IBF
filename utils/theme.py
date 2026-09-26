@@ -35,6 +35,18 @@ def load_css():
         </script>
     """, height=0)
     
+# No load_css(), esconde elementos com texto em inglês
+    st.markdown("""
+    <style>
+        /* Esconde toolbar, menu e footer com textos em inglês */
+        [data-testid="stToolbar"]        { display: none !important; }
+        [data-testid="stDecoration"]     { display: none !important; }
+        [data-testid="stStatusWidget"]   { display: none !important; }
+        footer                           { display: none !important; }
+        #MainMenu                        { display: none !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
 # CSS GLOBAL 
     st.markdown(f"""
     <style>
