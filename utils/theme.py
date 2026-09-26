@@ -352,4 +352,11 @@ def load_css():
         table.rel thead th, table.rel tbody td, table.rel tfoot td {{ padding: 5px 9px; }}
     }}
     </style>
+
+    <script>
+        document.documentElement.lang = 'pt-BR';
+        document.documentElement.setAttribute('translate', 'no');
+    </script>
+    <meta name="google" content="notranslate">
+    
     """, unsafe_allow_html=True)

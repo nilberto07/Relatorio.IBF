@@ -164,7 +164,7 @@ st.markdown(f"""
         <h1>Relatório Financeiro IBF</h1>
         <p>Gerado em {datetime.now().strftime('%d/%m/%Y')}</p>
     </div>
-    <div class="section-title">Cards Financeiro dos Últimos {ano_ref} meses</div>
+    <div class="section-title">Cards Financeiro dos Últimos {mes_ref} meses</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -172,7 +172,6 @@ st.markdown(f"""
 #  KPI CARDS
 # ─────────────────────────────────────────────
 st.markdown(f"""
-<div class="section-title">Resumo Financeiro</div>
 <div class="kpi-grid">
     <div class="kpi-card receitas">
         <div class="kpi-inner">
