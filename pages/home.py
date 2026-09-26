@@ -8,13 +8,9 @@ from utils.theme import load_css
 load_css()
 ssl._create_default_https_context = ssl._create_stdlib_context
 
-if "aviso_traducao_exibido" not in st.session_state:
-    st.toast(
-        "Por favor não traduzir a Página",
-        icon="⚠️",
-        duration=3
-    )
-    st.session_state.aviso_traducao_exibido = True
+#if "aviso_traducao_exibido" not in st.session_state:
+#    st.toast("Por favor não traduzir a Página", icon="⚠️", duration=3)
+#    st.session_state.aviso_traducao_exibido = True
 
 ABAS = {
     "Página1": "0",
